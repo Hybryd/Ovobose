@@ -12,6 +12,7 @@
 #include <cv_compatible.h>
 #include <fstream>
 #include <string>
+#include <iostream>
 
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -38,6 +39,15 @@ public:
   DataHandler();
   
   void readXYZ(std::string fileName, PointList & cloud);
+  
+  std::vector < double > readVector3(std::string fileName, std::string varName);
+  void saveVector3(std::string fileName, std::string varName, std::vector < double > & vec);
+  
+  std::vector< std::vector < double > > readMatrix3x3(std::string fileName, std::string varName);
+  void saveMatrix3x3(std::string fileName, std::string varName, std::vector< std::vector < double > > & mat);
+  
+  void saveMatrixAndVector(std::string fileName, std::string nameMat, std::vector< std::vector < double > > & mat, std::string nameVec, std::vector < double > & vec);
+  
   void saveAsXYZ(std::string fileName, std::vector< std::vector<double> > & vecMat);
   void saveAsXYZ(std::string fileName, PointList & cloud);
   void saveAsXYZ(std::string fileName, PointWNList & cloudWN);

@@ -4,12 +4,11 @@
 //#include <sstream>
 
 #include "../Calibration.h"
-#include "../DataConverter.h"
-//#include "../PostProcessor.h"
+#include "../DataHandler.h"
 #include "../Scan.h"
 
 
-// Usage ./main [scan.param]
+// Usage ./main_scan [scan.param]
 
 int main(int argc, char ** argv )
 {
@@ -23,10 +22,6 @@ int main(int argc, char ** argv )
   std::string     param_name_normal                    = "vecN";
   std::string     scan_output_file                     = "data/scan_output.xyz";
   double         scan_step_angle                      = 1;
-//  std::string     post_proc_output_file                = "data/scan_output_PP.xyz";
-//  pcl::PointXYZ   post_proc_cylinder_center            = pcl::PointXYZ(0,0,0);
-//  double         post_proc_cylinder_radius            = 7;
-//  double         post_proc_cylinder_height            = 15;
 
   if(argc>1)
   {
@@ -82,24 +77,6 @@ int main(int argc, char ** argv )
             {
               sline >> scan_step_angle;
             }
-//            else if (keyword == "#post_proc_output_file")
-//            {
-//              sline >> post_proc_output_file;
-//            }
-//            else if (keyword == "#post_proc_cylinder_center")
-//            {
-//              double x,y,z;
-//              sline >> x >> y >> z;
-//              post_proc_cylinder_center = pcl::PointXYZ(x,y,z);
-//            }
-//            else if (keyword == "#post_proc_cylinder_radius")
-//            {
-//              sline >> post_proc_cylinder_radius;
-//            }
-//            else if (keyword == "#post_proc_cylinder_height")
-//            {
-//              sline >> post_proc_cylinder_height;
-//            }
             else
             {
             
@@ -125,29 +102,25 @@ int main(int argc, char ** argv )
   std::cout << "     param_name_normal                    " << param_name_normal << std::endl;
   std::cout << "     scan_output_file                     " << scan_output_file << std::endl;
   std::cout << "     scan_step_angle                      " << scan_step_angle << std::endl;
-//  std::cout << "     post_proc_output_file                " << post_proc_output_file << std::endl;
-//  std::cout << "     post_proc_cylinder_center            " << post_proc_cylinder_center << std::endl;
-//  std::cout << "     post_proc_cylinder_radius            " << post_proc_cylinder_radius << std::endl;
-//  std::cout << "     post_proc_cylinder_height            " << post_proc_cylinder_height << std::endl;
   
   if(cal_needed=="yes")
   {
-//    Calibration cal(param_file);
-//    cal.circularPattern(cal_circular_pattern_number_points,cal_circular_pattern_radius);
-//    cal.save(param_name_matrix,param_name_normal);
     Calibration cal;
     cal.circularPattern(cal_circular_pattern_number_points,cal_circular_pattern_radius);
-    DataConverter dc;
-    std::vector<std::string> varNames;
-    std::vector<cv::Mat> vars;
-    
-    varNames.push_back("matM");
-    varNames.push_back("vecN");
-    
-    vars.push_back(cal.getMat());
-    vars.push_back(cal.getVec());
-    dc.saveInXML(param_file, varNames, vars);
-
+    DataHandler dh;
+//    std::vector<std::string> varNames;
+//    std::vector<cv::Mat> vars;
+//    
+//    varNames.push_back("matM");
+//    varNames.push_back("vecN");
+//    
+//    vars.push_back(cal.getMat());
+//    vars.push_back(cal.getVec());
+//    dc.saveInXML(param_file, varNames, vars);
+    std::vector< std::vector<double> > matt = cal.getMatSTD();
+    std::vector<double> vect = cal.getVecSTD();
+    dh.saveMatrix3x3(param_file, std::string("matM"), matt);
+    dh.saveVector3(param_file, std::string("vecN"), vect);
   }
   
   std::cout << " 2) Scan" << std::endl;
@@ -156,24 +129,20 @@ int main(int argc, char ** argv )
   scan.launch();
   scan.save();
   
-  pcl::PointCloud<pcl::PointXYZ> cloud;
-  pcl::PointCloud<pcl::PointXYZ> cloudPP;
-  DataConverter dc;
-  
+//  pcl::PointCloud<pcl::PointXYZ> cloud;
+//  pcl::PointCloud<pcl::PointXYZ> cloudPP;
+//  DataConverter dc;
+  DataHandler dh;  
   // Convert scanned data to cloud
   std::vector< std::vector<double> > dat=scan.getData();
-  dc.convert(dat,cloud);
+//  dc.convert(dat,cloud);
   
-  
-//  std::cout << " 3) Post process data" << std::endl;
-//  PostProcessor p;//cloud, post_proc_output_file);
-//  p.keepInCylinder(cloud, cloudPP, post_proc_cylinder_center, post_proc_cylinder_radius, post_proc_cylinder_height);
   
 //  std::cout << " 4) Save data in " << post_proc_output_file << std::endl;
 //  dc.save(post_proc_output_file, cloudPP);
   std::cout << " 3) Save data in " << scan_output_file << std::endl;
-  dc.save(scan_output_file, cloud);
-  
+//  dc.save(scan_output_file, cloud);
+  dh.saveAsXYZ(scan_output_file, dat);  
   return 0;
 }
 

@@ -5,7 +5,7 @@ Scan::Scan()
 {
   Vcut=200;
   angle=0;
-  paramFile="param/param.xml";
+  paramFile="param/scan_param.txt";
   outputFile="data/data.xyz";
   cvNamedWindow( "Scan" );
   stepAngle=2;
@@ -13,26 +13,26 @@ Scan::Scan()
 
 Scan::Scan(std::string pFile, std::string outFile, double stepAng)
 {
-  if (pFile.size() > 4 && pFile.find(".xml")==pFile.size()-4)
-  {
-    paramFile = pFile;
-  }
-  else
-  {
-    std::cerr << "Warning: bad name for parameter file. Parameters are read from param/cal_param.xml" << std::endl;
-    paramFile = "param/cal_param.xml";
-  }
+//  if (pFile.size() > 4 && pFile.find(".xml")==pFile.size()-4)
+//  {
+//    paramFile = pFile;
+//  }
+//  else
+//  {
+//    std::cerr << "Warning: bad name for parameter file. Parameters are read from param/cal_param.xml" << std::endl;
+//    paramFile = "param/cal_param.xml";
+//  }
 //  paramFile = "cal_param.xml";
   
-  if (outFile.size() > 4 && (outFile.find(".xyz")==outFile.size()-4 || outFile.find(".pcd")==outFile.size()-4 || outFile.find(".ply")==outFile.size()-4))
-  {
-    outputFile = outFile;
-  }
-  else
-  {
-    std::cerr << "Warning: bad name for output file. Data will be stored in data/data.xyz" << std::endl;
-    outputFile = "data/data.xyz";
-  }
+//  if (outFile.size() > 4 && (outFile.find(".xyz")==outFile.size()-4) )// || outFile.find(".pcd")==outFile.size()-4 || outFile.find(".ply")==outFile.size()-4))
+//  {
+//    outputFile = outFile;
+//  }
+//  else
+//  {
+//    std::cerr << "Warning: bad name for output file. Data will be stored in data/data.xyz" << std::endl;
+//    outputFile = "data/data.xyz";
+//  }
 
   Vcut=200;
     
@@ -75,7 +75,7 @@ void Scan::read(std::string pNameMatrix, std::string pNameNormal)
   
   if(pNameMatrix.size()==0 || pNameNormal.size()==0 || pNameMatrix.find(" ") != std::string::npos || pNameNormal.find(" ") != std::string::npos)
   {
-    std::cerr << "Warning: bad name for data variables. The transformation matrix will be saved in the XML file as \"matM\" and the normal vector as \"vecN\"." << std::endl;
+    std::cerr << "Warning: bad name for data variables. The transformation matrix will be saved in the parameter file as \"matM\" and the normal vector as \"vecN\"." << std::endl;
     lM = "matM";
     lN = "vecN";
   }

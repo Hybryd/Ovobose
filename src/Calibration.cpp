@@ -31,6 +31,31 @@ Calibration::~Calibration()
 }
 
 
+std::vector< std::vector < double > > Calibration::getMatSTD()
+{
+  std::vector< std::vector < double > > res;
+  for(int i=0;i<3;++i)
+  {
+    std::vector < double > raw;
+    for(int j=0;j<3;++j)
+    {
+       raw.push_back(matM.at<double>(i,j));
+    }
+    res.push_back(raw);
+  }
+  return res;
+}
+
+std::vector < double > Calibration::getVecSTD()
+{
+  std::vector < double > res;
+  for(int i=0;i<3;++i)
+  {
+    res.push_back(vecN.at<double>(i,0));
+  }
+  return res;
+}
+
 
 void onMouseCircularPattern(int event, int x, int y, int flags, void* pair)
 {

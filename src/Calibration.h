@@ -77,8 +77,9 @@ public:
   std::vector<cv::Point3d> &  getVecRPoints() {return vecRPoints;}
   
   cv::Mat getMat() {return matM;}
+  std::vector< std::vector < double > > getMatSTD();
   cv::Mat getVec() {return vecN;}
-  
+  std::vector < double > getVecSTD();
   
 //  void onMouseCircularPattern(int event, int x, int y, int flags, void* param);
   void circularPattern(int pNbCal,double pRadius);
