@@ -124,6 +124,7 @@ int main(int argc, char ** argv)
   fs << "distorsion" << distCoeffs;
   fs << "rotation" << rotation;
   fs << "translation" << tvecs[0];
+
   
   cvDestroyWindow( "Calibration" );
   
@@ -345,10 +346,10 @@ int main(int argc, char ** argv)
     double xInter= -(bVert-bDiag)/(aVert-aDiag);
     double yInter= aDiag*xInter + bDiag;
     cv::Point ptInter(xInter, yInter);
-    
-    
-    
-    // /!\ WARNING : DIAG MUST CROSS THE TOP OF THE IMAGE      (???) 
+
+
+
+    // /!\ WARNING : DIAG MUST CROSS THE TOP OF THE IMAGE      (???)
     ptVert1.y = 0;
     if(aVert < 9999)
       ptVert1.x = -bVert/aVert;
@@ -385,7 +386,9 @@ int main(int argc, char ** argv)
   cvDestroyWindow("Detected laser");
 	cvDestroyWindow("Laser detection");
 	
-
+  // Save values of thresholding
+  fs << "V_cut" << V_cut;
+  fs << "H_cut" << H_cut;
 
 
 
