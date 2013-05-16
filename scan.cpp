@@ -1,31 +1,27 @@
 #include <cv.h>
+#include <fstream>
 #include <highgui.h>
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
 
+////////////////////////////////////////////////////////////////////
+// Read parameters from a file and scan the laser line to compute //
+// 3D corresponding coordinates.                                  //
+// The output file is aimed to be read by gnuplot                 //
+//                                                                //
+// Usage: ./scan [parameterFile.xml] [output.gp]                  //
+////////////////////////////////////////////////////////////////////
+
 // Values for the manual thresholding of images during the laser detection
 int V_cut=200;
-int H_cut=90;
-
 
 // Function called by the trackbar
 void onTrackbar(int, void* = NULL)
 {
 }
 
-
-// Function pi that changes the pixel in homogeneous coordinates [u,v,1] to the point [su,sv,s] that lies on the laser plane
-cv::Mat pi(cv::Point3d & p, cv::Mat & n)
-{
-  cv::Mat res=cv::Mat::zeros(3,1,cv::DataType<double>::type);
-  double lambda = 1.;///(p.x*n.at<double>(0,0) + p.y*n.at<double>(0,1) + n.at<double>(0,2)); // WHY DOES IT WORK ???
-  res.at<double>(0,0) = lambda*p.x;
-  res.at<double>(0,1) = lambda*p.y;
-  res.at<double>(0,2) = lambda;
-  return res;
-}
 
 
 //////////
@@ -39,17 +35,12 @@ int main(int argc, char ** argv)
   cv::Mat HSV_image;
   cv::Mat HSV_gray_image;
   cv::Mat HSV_gray_image2;
-  cv::Mat intrinsic;
-  cv::Mat distorsion; // not used here
-  cv::Mat rotation;
 
-  cv::Mat translation;
-  cv::Mat RT(3,4,cv::DataType<double>::type);
-  cv::Mat prod(3,4,cv::DataType<double>::type);
-  cv::Mat prodMat(3,3,cv::DataType<double>::type);
-  cv::Mat prodMatInv(3,3,cv::DataType<double>::type);
-  cv::Mat prodVec(3,1,cv::DataType<double>::type);
-  cv::Mat normal(3,1,cv::DataType<double>::type);
+  cv::Mat matM(3,4,cv::DataType<double>::type);
+  cv::Mat normal(4,1,cv::DataType<double>::type);
+  
+  cv::Mat finalVec(3,1,cv::DataType<double>::type);
+  cv::Mat finalMat(3,3,cv::DataType<double>::type);
   
   std::stringstream ss;
   
@@ -57,63 +48,10 @@ int main(int argc, char ** argv)
     ss << argv[1];
   else
     ss << "param.xml";
+  
   cv::FileStorage fs(ss.str(), cv::FileStorage::READ); // parameters file
-
-  // Read parameters  
-  std::cout << " Read parameters stored in \"" << ss.str() << "\"." << std::endl;
-  fs["intrinsic"] >> intrinsic;
-  fs["distorsion"] >> distorsion;
-  fs["rotation"] >> rotation;
-  fs["translation"] >> translation;
+  fs["matM"] >> matM;
   fs["normal"] >> normal;
-  fs["V_cut"] >> V_cut;
-  fs["H_cut"] >> H_cut;
-  
-  fs.release();
-  
-//  std::cout << "Intrinsic matrix : " << std::endl << intrinsic << std::endl;
-//  std::cout << "Distortion matrix : " << std::endl << distorsion << std::endl;
-//  std::cout << "Rotation matrix : " << std::endl << rotation << std::endl;
-//  std::cout << "Translation vector : " << std::endl << translation << std::endl;
-//  std::cout << "Normal vector : " << std::endl << normal << std::endl;
-  
-  std::cerr << "koko" << std::endl;
-  
-  // Concatenate [R|T]
-  for(int i=0;i<rotation.rows;++i)
-  {
-    for(int j=0;j<rotation.cols;++j)
-    {
-      RT.at<double>(i,j) = rotation.at<double>(i,j);
-    }
-    RT.at<double>(i,3) = translation.at<double>(i,0);
-  }
-  
-//  std::cerr << "koko2" << prod.rows << "x" << prod.cols << std::endl;
-  
-  // Compute prod = intrinsic.[R|T]
-  prod = intrinsic*RT;
-//  std::cerr << "prod" << prod << std::endl;
-  // Decompose prod in [prodMat|prodVec]
- // prodMat = prod(cv::Range(1, 1), cv::Range(3, 3));
-  for(int i=0;i<3;++i)
-  {
-    for(int j=0;j<3;++j)
-    {
-      prodMat.at<double>(i,j) = prod.at<double>(i,j);
-    }
-    prodVec.at<double>(i,0) = prod.at<double>(i,3);
-  }
-//  std::cerr << "prodMat" << prodMat << std::endl;
-//  std::cerr << "prodVec" << prodVec << std::endl;
-//   Inverse of prodMat
-  prodMatInv = prodMat.inv();
-  
-  
- //  Given a pixel [u,v] on the red line, to get the 3D point [X,Y,Z] that lies on the laser plane, apply the formula:
- //  [X,Y,Z] = prodMatInv . ( pi([u,v,1]) - prodVec )
-  
-  
   
   cv::VideoCapture capture = cv::VideoCapture(0);
   if(!capture.isOpened())
@@ -124,12 +62,11 @@ int main(int argc, char ** argv)
   capture >> image;
   
   
-  
   cvNamedWindow( "Scan" );
   cv::createTrackbar("Brightness", "Scan", &V_cut, 250, onTrackbar);
   onTrackbar(0);
   
-  // Type space when ready
+  // Type space when ready to scan
   while(key != ' ')
   {
     cv::cvtColor(image, HSV_image, CV_BGR2HSV);
@@ -152,12 +89,8 @@ int main(int argc, char ** argv)
       }
     }
     cv::blur( HSV_image, HSV_image, cv::Size(3,3) );
-
     cvtColor( HSV_image, HSV_gray_image, CV_BGR2GRAY );
     
-    imshow("Scan", HSV_gray_image);
-
-
 
     // Find the middle of the laser line
     HSV_gray_image2 = HSV_gray_image.clone();
@@ -174,33 +107,71 @@ int main(int argc, char ** argv)
         HSV_gray_image2.at<unsigned char>(i,row[row.size()/2]) = 255;
       row.clear();
     }
+    
+    imshow("Scan", HSV_gray_image2);
     key = cv::waitKey(10);
     capture >> image;
-    
   }
   
+  
+  
   // Find the pixels and compute corresponding 3D point
-  std::vector<cv::Mat> L;// = cv::Mat::zeros(image.rows,1,cv::DataType<double>::type);
-  for(int i=0; i<HSV_gray_image2.rows; i++)
+  // (u=j v=i)
+  
+  std::vector<cv::Mat> L; // will contain the real points
+  for(int v=0; v<HSV_gray_image2.rows; v++)
   {
-    for(int j=0; j<HSV_gray_image2.cols; j++)
+    for(int u=0; u<HSV_gray_image2.cols; u++)
     {
-      if(HSV_gray_image2.at<unsigned char>(i,j) == 255) // enlighted pixel
+      if(HSV_gray_image2.at<unsigned char>(v,u) == 255) // enlighted pixel
       {
-        cv::Point3d p(i,j,1);
-        cv::Mat P=prodMatInv*( pi(p,normal) - prodVec );
-        L.push_back(P);
+
+        finalMat.at<double>(0,0) = matM.at<double>(0,0) - matM.at<double>(2,0)*u;
+        finalMat.at<double>(0,1) = matM.at<double>(0,1) - matM.at<double>(2,1)*u;
+        finalMat.at<double>(0,2) = matM.at<double>(0,2) - matM.at<double>(2,2)*u;
+
+        finalMat.at<double>(1,0) = matM.at<double>(1,0) - matM.at<double>(2,0)*v;
+        finalMat.at<double>(1,1) = matM.at<double>(1,1) - matM.at<double>(2,1)*v;
+        finalMat.at<double>(1,2) = matM.at<double>(1,2) - matM.at<double>(2,2)*v;
+        
+        finalMat.at<double>(2,0) = normal.at<double>(0,0);
+        finalMat.at<double>(2,1) = normal.at<double>(0,1);
+        finalMat.at<double>(2,2) = normal.at<double>(0,2);
+        
+        finalVec.at<double>(0,0) = matM.at<double>(2,3)*u - matM.at<double>(0,3);
+        finalVec.at<double>(0,1) = matM.at<double>(2,3)*v - matM.at<double>(1,3);
+        finalVec.at<double>(0,2) = -normal.at<double>(0,3);
+
+        finalMat=finalMat.inv();
+        
+        L.push_back(finalMat*finalVec);
+
       }
     }
   }
   cvDestroyWindow("Scan");
   
-  // prints
-//  for(int i=0;i<L.size();++i)
-//  {
-//    std::cout << L[i].at<double>(0,0) << " " << L[i].at<double>(0,1) << " " << L[i].at<double>(0,2) << std::endl;
-//  }
-//  std::cerr << L.size()<< std::endl;
+  // Save data
+  ss.str("");
+  if(argc > 2)
+    ss << argv[2];
+  else
+    ss << "output.gp";
+  
+//  std::ofstream out;
+//  out.open(ss.str());
+  std::ofstream out(ss.str().c_str());
+  if(!out.is_open())
+  {
+    std::cerr << "Error: unable to open " << ss.str() << std::endl;
+    return -1;
+  }
+  
+  for(size_t i=0;i<L.size();++i)
+  {
+    out << L[i].at<double>(0,0) << " " << L[i].at<double>(0,1) << " " << L[i].at<double>(0,2) << std::endl;
+  }
+  //std::cerr << L.size()<< std::endl;
 
   return 0;
 }
