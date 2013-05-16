@@ -6,3 +6,4 @@ all:
 	g++ -O2 -Wall  -o scan3 scan3.cpp `pkg-config --cflags --libs opencv`
 clean:
 	rm -rf exemple
+	
