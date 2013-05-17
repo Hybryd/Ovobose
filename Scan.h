@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define PI 3.14159265358979323846264
+
 ////////////////////////////////////////////////////////////////////
 // Read parameters from a file and scan the laser line to compute //
 // 3D corresponding coordinates.                                  //
@@ -25,6 +27,7 @@ protected:
   std::vector< std::vector<cv::Mat> >       data;       // the set of all measures (vector of vector of points)
   cv::Mat                                   matM;       // transformation matrix
   cv::Mat                                   vecN;       // normal vector to the laser plane
+  double                                   angle;      // current angle for rotation
   
 public:
   Scan();
@@ -33,6 +36,7 @@ public:
   void read(std::string pNameMatrix, std::string pNameNormal);
   
   void launch();  // called to take several measures (during a rotation for instance)
+  cv::Mat makeRotationMatrix();
   void measure(cv::Mat & current); // called when ready to measure
   
   void save();

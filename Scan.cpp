@@ -4,6 +4,7 @@
 Scan::Scan()
 {
   Vcut=200;
+  angle=0;
   paramFile="param.xml";
   outputFile="output.gp";
   cvNamedWindow( "Scan" );
@@ -35,7 +36,7 @@ Scan::Scan(std::string pFile, std::string outFile, int pVcut)
     Vcut=pVcut;
   else
     Vcut=200;
-    
+  angle=0;
   cvNamedWindow( "Scan" );
 }
 
@@ -141,12 +142,23 @@ void Scan::launch()
   }
 }
 
-
+cv::Mat Scan::makeRotationMatrix()
+{
+  cv::Mat rot(3,3,cv::DataType<double>::type);
+  // rotation around Z axis
+  rot.at<double>(0,0)=cos(angle) ; rot.at<double>(0,1)=-sin(angle) ; rot.at<double>(0,2)=0 ; 
+  rot.at<double>(1,0)=sin(angle) ; rot.at<double>(1,1)=cos(angle)  ; rot.at<double>(1,2)=0 ;
+  rot.at<double>(2,0)=0          ; rot.at<double>(2,1)=0           ; rot.at<double>(2,2)=1 ;
+  return rot;
+}
 
 void Scan::measure(cv::Mat & current)
 {
   cv::Mat finalVec(3,1,cv::DataType<double>::type);
   cv::Mat finalMat(3,3,cv::DataType<double>::type);
+
+  cv::Mat rot=makeRotationMatrix();
+  angle += 2*PI/180;
 
   // Find the pixels and compute corresponding 3D point
   // (u=j v=i)
@@ -177,7 +189,7 @@ void Scan::measure(cv::Mat & current)
 
         finalMat=finalMat.inv();
         
-        L.push_back(finalMat*finalVec);
+        L.push_back(rot*finalMat*finalVec);
 
       }
     }
@@ -194,6 +206,7 @@ void Scan::measure(cv::Mat & current)
 
 void Scan::save()
 {
+  double x,y,z;
   std::ofstream out(outputFile.c_str());
   if(!out.is_open())
   {
@@ -205,7 +218,12 @@ void Scan::save()
   {
     for(size_t j=0;j<data[i].size();++j)
     {
-      out << data[i][j].at<double>(0,0) << " " << data[i][j].at<double>(0,1) << " " << data[i][j].at<double>(0,2) << std::endl;
+      x=data[i][j].at<double>(0,0);
+      y=data[i][j].at<double>(0,1);
+      z=data[i][j].at<double>(0,2);
+      if(x*x+y*y < 30)
+        out << x << " " << y << " " << z << std::endl;
+        //out << data[i][j].at<double>(0,0) << " " << data[i][j].at<double>(0,1) << " " << data[i][j].at<double>(0,2) << std::endl;
     }
   }
 }

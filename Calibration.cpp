@@ -13,6 +13,9 @@ Calibration::Calibration(std::string pFile)
   cptMouse = 0;
   if (pFile.size() > 4 && pFile.find(".xml")==pFile.size()-4)
   {
+//    /// ADEL
+//    std::cerr << "contructor" << std::endl;
+//    /// 
     paramFile = pFile;
   }
   else
@@ -143,6 +146,9 @@ void Calibration::save(std::string pNameMatrix, std::string pNameNormal)
     lM = "matM";
     lN = "vecN";
   }
+  
+  fs << lM << matM;
+  fs << lN << vecN;
   
   fs.release();
   
