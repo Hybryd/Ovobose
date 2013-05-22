@@ -6,7 +6,7 @@ Scan::Scan()
   Vcut=200;
   angle=0;
   paramFile="param.xml";
-  outputFile="output.gp";
+  outputFile="data.gp";
   cvNamedWindow( "Scan" );
 }
 
@@ -28,8 +28,8 @@ Scan::Scan(std::string pFile, std::string outFile, int pVcut)
   }
   else
   {
-    std::cerr << "Warning: bad name for output file. Data will be stored in \"output.gp\"." << std::endl;
-    paramFile = "output.gp";
+    std::cerr << "Warning: bad name for output file. Data will be stored in \"data.gp\"." << std::endl;
+    paramFile = "data.gp";
   }
 
   if(0 < pVcut && pVcut < 250)
@@ -163,7 +163,7 @@ void Scan::measure(cv::Mat & current)
   // Find the pixels and compute corresponding 3D point
   // (u=j v=i)
   
-  std::vector<cv::Mat> L; // will contain the real points
+//  std::vector<cv::Mat> L; // will contain the real points
   for(int v=0; v<current.rows; v++)
   {
     for(int u=0; u<current.cols; u++)
@@ -189,12 +189,12 @@ void Scan::measure(cv::Mat & current)
 
         finalMat=finalMat.inv();
         
-        L.push_back(rot*finalMat*finalVec);
+        data.push_back(rot*finalMat*finalVec);
 
       }
     }
   }
-  data.push_back(L);
+//  data.push_back(L);
 }
 
 
@@ -206,7 +206,7 @@ void Scan::measure(cv::Mat & current)
 
 void Scan::save()
 {
-  double x,y,z;
+//  double x,y,z;
   std::ofstream out(outputFile.c_str());
   if(!out.is_open())
   {
@@ -216,15 +216,16 @@ void Scan::save()
   
   for(size_t i=0;i<data.size();++i)
   {
-    for(size_t j=0;j<data[i].size();++j)
-    {
-      x=data[i][j].at<double>(0,0);
-      y=data[i][j].at<double>(0,1);
-      z=data[i][j].at<double>(0,2);
-      if(x*x+y*y < 30)
-        out << x << " " << y << " " << z << std::endl;
-        //out << data[i][j].at<double>(0,0) << " " << data[i][j].at<double>(0,1) << " " << data[i][j].at<double>(0,2) << std::endl;
-    }
+//    for(size_t j=0;j<data[i].size();++j)
+//    {
+//      x=data[i][j].at<double>(0,0);
+//      y=data[i][j].at<double>(0,1);
+//      z=data[i][j].at<double>(0,2);
+//      if(x*x+y*y < 30)
+//        out << x << " " << y << " " << z << std::endl;
+//      out << data[i][j].at<double>(0,0) << " " << data[i][j].at<double>(0,1) << " " << data[i][j].at<double>(0,2) << std::endl;
+      out << data[i].at<double>(0,0) << " " << data[i].at<double>(0,1) << " " << data[i].at<double>(0,2) << std::endl;
+//    }
   }
 }
 

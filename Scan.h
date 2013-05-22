@@ -24,7 +24,7 @@ protected:
   std::string                               paramFile;
   std::string                               outputFile;
   int                                       Vcut;       // value for the manual thresholding
-  std::vector< std::vector<cv::Mat> >       data;       // the set of all measures (vector of vector of points)
+  std::vector<cv::Mat>                      data;       // the set of all measures (vector of vector of points)
   cv::Mat                                   matM;       // transformation matrix
   cv::Mat                                   vecN;       // normal vector to the laser plane
   double                                   angle;      // current angle for rotation
@@ -32,6 +32,7 @@ protected:
 public:
   Scan();
   Scan(std::string pFile, std::string outFile, int pVcut);
+  std::vector<cv::Mat> & getData() {return data;}
   
   void read(std::string pNameMatrix, std::string pNameNormal);
   
