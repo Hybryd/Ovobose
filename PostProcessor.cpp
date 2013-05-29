@@ -2,30 +2,30 @@
 
 PostProcessor::PostProcessor()
 {
-  std::cerr << "Warning: no name given for the input file." << std::endl << "Input and output file are set to \"data.gp\" and \"data_PP.gp\"." << std::endl;
+  std::cerr << "Warning: no name given for the input file." << std::endl << "Input and output file are set to \"data.xyz\" and \"data_PP.xyz\"." << std::endl;
   
-  std::ifstream input("data.gp");
+  std::ifstream input("data.xyz");
   if(!input.is_open())
   {
-    std::cerr << "Error: unable to open \"data.gp\"" << std::endl;
+    std::cerr << "Error: unable to open \"data.xyz\"" << std::endl;
     exit(-1);
   }
   else
   {
-    inputFile = "data.gp";
+    inputFile = "data.xyz";
   }
   
   input.close();
   
-  std::ofstream output("data_PP.gp");
+  std::ofstream output("data_PP.xyz");
   if(!output.is_open())
   {
-    std::cerr << "Error: unable to open \"data_PP.gp\"" << std::endl;
+    std::cerr << "Error: unable to open \"data_PP.xyz\"" << std::endl;
     exit(-1);
   }
   else
   {
-    outputFile = "data_PP.gp";
+    outputFile = "data_PP.xyz";
   }
   output.close();
   

@@ -28,10 +28,11 @@ protected:
   cv::Mat                                   matM;       // transformation matrix
   cv::Mat                                   vecN;       // normal vector to the laser plane
   double                                   angle;      // current angle for rotation
+  double                                   stepAngle;  // rotation between two scans
   
 public:
   Scan();
-  Scan(std::string pFile, std::string outFile, int pVcut);
+  Scan(std::string pFile, std::string outFile, double stepAng);
   std::vector<cv::Mat> & getData() {return data;}
   
   void read(std::string pNameMatrix, std::string pNameNormal);

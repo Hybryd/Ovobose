@@ -6,11 +6,12 @@ Scan::Scan()
   Vcut=200;
   angle=0;
   paramFile="param.xml";
-  outputFile="data.gp";
+  outputFile="data.xyz";
   cvNamedWindow( "Scan" );
+  stepAngle=2;
 }
 
-Scan::Scan(std::string pFile, std::string outFile, int pVcut)
+Scan::Scan(std::string pFile, std::string outFile, double stepAng)
 {
   if (pFile.size() > 4 && pFile.find(".xml")==pFile.size()-4)
   {
@@ -22,21 +23,19 @@ Scan::Scan(std::string pFile, std::string outFile, int pVcut)
     paramFile = "param.xml";
   }
   
-  if (outFile.size() > 3 && outFile.find(".gp")==outFile.size()-3)
+  if (outFile.size() > 4 && outFile.find(".xyz")==outFile.size()-4)
   {
     outputFile = outFile;
   }
   else
   {
-    std::cerr << "Warning: bad name for output file. Data will be stored in \"data.gp\"." << std::endl;
-    paramFile = "data.gp";
+    std::cerr << "Warning: bad name for output file. Data will be stored in \"data.xyz\"." << std::endl;
+    paramFile = "data.xyz";
   }
 
-  if(0 < pVcut && pVcut < 250)
-    Vcut=pVcut;
-  else
-    Vcut=200;
-  angle=0;
+  Vcut=200;
+    
+  stepAngle = stepAng;
   cvNamedWindow( "Scan" );
 }
 
@@ -158,12 +157,11 @@ void Scan::measure(cv::Mat & current)
   cv::Mat finalMat(3,3,cv::DataType<double>::type);
 
   cv::Mat rot=makeRotationMatrix();
-  angle += 2*PI/180;
+  angle += 1*PI/180;
 
   // Find the pixels and compute corresponding 3D point
   // (u=j v=i)
   
-//  std::vector<cv::Mat> L; // will contain the real points
   for(int v=0; v<current.rows; v++)
   {
     for(int u=0; u<current.cols; u++)
@@ -194,12 +192,11 @@ void Scan::measure(cv::Mat & current)
       }
     }
   }
-//  data.push_back(L);
 }
 
 
 
-// Save according to the gnuplot format:
+// Save according to the XYZ format:
 // X1 Y1 Z1
 // X2 Y2 Z2
 // :  :  :

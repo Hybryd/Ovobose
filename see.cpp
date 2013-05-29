@@ -21,7 +21,7 @@ int main(int argc, char ** argv)
   while(key!='q')
   {
     key = cv::waitKey(10);
-    imshow("Just see...", image);
+    imshow("Just see.", image);
     capture >> image;
   }
   

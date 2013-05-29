@@ -4,7 +4,7 @@
 Calibration::Calibration()
 {
   cptMouse = 0;
-  paramFile = "param.xml";
+  paramFile = "cal_param.xml";
   cvNamedWindow( "Calibration" );
 }
 
@@ -20,8 +20,8 @@ Calibration::Calibration(std::string pFile)
   }
   else
   {
-    std::cerr << "Warning: bad name for output file. Parameters will be saved in \"param.xml\"." << std::endl;
-    paramFile = "param.xml";
+    std::cerr << "Warning: bad name for output file. Parameters will be saved in \"cal_param.xml\"." << std::endl;
+    paramFile = "cal_param.xml";
   }
   cvNamedWindow( "Calibration" );
 }
