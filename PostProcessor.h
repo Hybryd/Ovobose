@@ -4,6 +4,10 @@
 #include <cv.h>
 #include <fstream>
 #include <iostream>
+#include <pcl/io/io.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/io/ply_io.h>
+#include <pcl/point_types.h>
 #include <string>
 
 
@@ -24,6 +28,10 @@ public:
   
   void read();
   void keepInCylinder(cv::Point3d center, double radius, double height);
+  
+  void saveAsPCD();
+  void saveAsPLY();
+  void saveAsXYZ();
   void save();
 
 };

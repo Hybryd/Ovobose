@@ -19,18 +19,19 @@ Scan::Scan(std::string pFile, std::string outFile, double stepAng)
   }
   else
   {
-    std::cerr << "Warning: bad name for parameter file. Parameters are read from \"param.xml\"." << std::endl;
-    paramFile = "param.xml";
+    std::cerr << "Warning: bad name for parameter file. Parameters are read from \"cal_param.xml\"." << std::endl;
+    paramFile = "cal_param.xml";
   }
+//  paramFile = "cal_param.xml";
   
-  if (outFile.size() > 4 && outFile.find(".xyz")==outFile.size()-4)
+  if (outFile.size() > 4 && (outFile.find(".xyz")==outFile.size()-4 || outFile.find(".pcd")==outFile.size()-4 || outFile.find(".ply")==outFile.size()-4))
   {
     outputFile = outFile;
   }
   else
   {
-    std::cerr << "Warning: bad name for output file. Data will be stored in \"data.xyz\"." << std::endl;
-    paramFile = "data.xyz";
+    std::cerr << "Warning: bad name for output file. Data will be stored in \"data/data.xyz\"." << std::endl;
+    outputFile = "data/data.xyz";
   }
 
   Vcut=200;
@@ -50,6 +51,7 @@ void Scan::read(std::string pNameMatrix, std::string pNameNormal)
     lM = "matM";
     lN = "vecN";
   }
+//  paramFile = "cal_param.xml";
   cv::FileStorage fs(paramFile, cv::FileStorage::READ); // parameters file
   
   matM.create(3,4,cv::DataType<double>::type);
@@ -57,6 +59,10 @@ void Scan::read(std::string pNameMatrix, std::string pNameNormal)
   
   fs[lM] >> matM;
   fs[lN] >> vecN;
+  
+//  std::cerr << "matM " << matM << std::endl;
+//  std::cerr << "vecN " << vecN << std::endl;
+    
 }
 
 // Function called by the trackbar
@@ -157,7 +163,9 @@ void Scan::measure(cv::Mat & current)
   cv::Mat finalMat(3,3,cv::DataType<double>::type);
 
   cv::Mat rot=makeRotationMatrix();
-  angle += 1*PI/180;
+  angle += stepAngle*PI/180;
+  
+  
 
   // Find the pixels and compute corresponding 3D point
   // (u=j v=i)
@@ -195,15 +203,36 @@ void Scan::measure(cv::Mat & current)
 }
 
 
+void Scan::saveAsPCD()
+{
+  pcl::PointCloud<pcl::PointXYZ> cloud;
+  pcl::PointXYZ pt;
+  for(size_t i=0;i<data.size();++i)
+  {
+    cloud.push_back(pcl::PointXYZ(data[i].at<double>(0,0),data[i].at<double>(0,1),data[i].at<double>(0,2)));
+  }
+  pcl::io::savePCDFile (outputFile.c_str(), cloud);
+}
+
+void Scan::saveAsPLY()
+{
+  pcl::PointCloud<pcl::PointXYZ> cloud;
+  pcl::PointXYZ pt;
+  for(size_t i=0;i<data.size();++i)
+  {
+    cloud.push_back(pcl::PointXYZ(data[i].at<double>(0,0),data[i].at<double>(0,1),data[i].at<double>(0,2)));
+  }
+  pcl::io::savePCDFile (outputFile.c_str(), cloud);
+}
+
 
 // Save according to the XYZ format:
 // X1 Y1 Z1
 // X2 Y2 Z2
 // :  :  :
 
-void Scan::save()
+void Scan::saveAsXYZ()
 {
-//  double x,y,z;
   std::ofstream out(outputFile.c_str());
   if(!out.is_open())
   {
@@ -213,16 +242,26 @@ void Scan::save()
   
   for(size_t i=0;i<data.size();++i)
   {
-//    for(size_t j=0;j<data[i].size();++j)
-//    {
-//      x=data[i][j].at<double>(0,0);
-//      y=data[i][j].at<double>(0,1);
-//      z=data[i][j].at<double>(0,2);
-//      if(x*x+y*y < 30)
-//        out << x << " " << y << " " << z << std::endl;
-//      out << data[i][j].at<double>(0,0) << " " << data[i][j].at<double>(0,1) << " " << data[i][j].at<double>(0,2) << std::endl;
-      out << data[i].at<double>(0,0) << " " << data[i].at<double>(0,1) << " " << data[i].at<double>(0,2) << std::endl;
-//    }
+    out << data[i].at<double>(0,0) << " " << data[i].at<double>(0,1) << " " << data[i].at<double>(0,2) << std::endl;
+  }
+}
+
+
+void Scan::save()
+{
+  if (outputFile.find(".pcd")==outputFile.size()-4)
+  {
+    saveAsPCD();
+  }
+  else if (outputFile.find(".ply")==outputFile.size()-4)
+  {
+    saveAsPLY();
+  }
+  else
+  {
+    if(outputFile.find(".xyz")!=outputFile.size()-4)
+      outputFile += ".xyz";
+    saveAsXYZ();
   }
 }
 

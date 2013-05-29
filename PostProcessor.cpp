@@ -131,23 +131,86 @@ void PostProcessor::keepInCylinder(cv::Point3d center, double radius, double hei
 }
 
 
-
-
-void PostProcessor::save()
+void PostProcessor::saveAsPCD()
 {
-//  double x,y,z;
-  std::ofstream output(outputFile.c_str());
-  if(!output.is_open())
+//  std::cerr << "saveAsPCD" << std::endl;
+  pcl::PointCloud<pcl::PointXYZ> cloud;
+  pcl::PointXYZ pt;
+  for(size_t i=0;i<dataPP.size();++i)
   {
-    std::cerr << "Error: unable to open \""<< outputFile << "\"" << std::endl;
+    cloud.push_back(pcl::PointXYZ(dataPP[i].at<double>(0,0),dataPP[i].at<double>(0,1),dataPP[i].at<double>(0,2)));
+  }
+  pcl::io::savePCDFile (outputFile.c_str(), cloud);
+}
+
+void PostProcessor::saveAsPLY()
+{
+//  std::cerr << "saveAsPLY" << std::endl;
+  pcl::PointCloud<pcl::PointXYZ> cloud;
+  pcl::PointXYZ pt;
+  for(size_t i=0;i<dataPP.size();++i)
+  {
+    cloud.push_back(pcl::PointXYZ(dataPP[i].at<double>(0,0),dataPP[i].at<double>(0,1),dataPP[i].at<double>(0,2)));
+  }
+  pcl::io::savePCDFile (outputFile.c_str(), cloud);
+}
+
+
+// Save according to the XYZ format:
+// X1 Y1 Z1
+// X2 Y2 Z2
+// :  :  :
+
+void PostProcessor::saveAsXYZ()
+{
+//  std::cerr << "saveAsXYZ" << std::endl;
+  std::ofstream out(outputFile.c_str());
+  if(!out.is_open())
+  {
+    std::cerr << "Error: unable to open " << outputFile << std::endl;
     exit(-1);
   }
   
   for(size_t i=0;i<dataPP.size();++i)
   {
-    output << dataPP[i].at<double>(0,0) << " " << dataPP[i].at<double>(0,1) << " " << dataPP[i].at<double>(0,2) << std::endl;
+    out << dataPP[i].at<double>(0,0) << " " << dataPP[i].at<double>(0,1) << " " << dataPP[i].at<double>(0,2) << std::endl;
   }
 }
+
+
+void PostProcessor::save()
+{
+  if (outputFile.find(".pcd")==outputFile.size()-4)
+  {
+    saveAsPCD();
+  }
+  else if (outputFile.find(".ply")==outputFile.size()-4)
+  {
+    saveAsPLY();
+  }
+  else
+  {
+    if(outputFile.find(".xyz")!=outputFile.size()-4)
+      outputFile += ".xyz";
+    saveAsXYZ();
+  }
+}
+
+//void PostProcessor::save()
+//{
+////  double x,y,z;
+//  std::ofstream output(outputFile.c_str());
+//  if(!output.is_open())
+//  {
+//    std::cerr << "Error: unable to open \""<< outputFile << "\"" << std::endl;
+//    exit(-1);
+//  }
+//  
+//  for(size_t i=0;i<dataPP.size();++i)
+//  {
+//    output << dataPP[i].at<double>(0,0) << " " << dataPP[i].at<double>(0,1) << " " << dataPP[i].at<double>(0,2) << std::endl;
+//  }
+//}
 
 
 

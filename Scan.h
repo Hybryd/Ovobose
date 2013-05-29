@@ -5,9 +5,14 @@
 #include <fstream>
 #include <highgui.h>
 #include <iostream>
+#include <pcl/io/io.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/io/ply_io.h>
+#include <pcl/point_types.h>
 #include <sstream>
 #include <stdio.h>
 #include <stdlib.h>
+
 
 #define PI 3.14159265358979323846264
 
@@ -41,7 +46,11 @@ public:
   cv::Mat makeRotationMatrix();
   void measure(cv::Mat & current); // called when ready to measure
   
+  void saveAsPCD();
+  void saveAsPLY();
+  void saveAsXYZ();  
   void save();
+  ;
 
 };
 
