@@ -1,4 +1,4 @@
-LTS
+Ovobose
 ===
 
-Laser Triangulation System
+A 3D scanning system.
