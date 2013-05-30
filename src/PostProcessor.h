@@ -14,25 +14,27 @@
 class PostProcessor
 {
 protected:
-  std::string                             inputFile;  // contains raw data
-  std::string                             outputFile; // contains processed data
-  std::vector<cv::Mat>                    data;       // raw data
-  std::vector<cv::Mat>                    dataPP;     // processed data
-  
+//  std::string                             inputFile;  // contains raw data
+//  std::string                             outputFile; // contains processed data
+//  pcl::PointCloud<pcl::PointXYZ>::Ptr     data;       // raw data
+//  pcl::PointCloud<pcl::PointXYZ>::Ptr     dataPP;     // processed data
 
 
 public:
   PostProcessor();
-  PostProcessor(std::string inFile, std::string outFile);
-  PostProcessor(std::vector<cv::Mat> & pData, std::string outFile);
+//  PostProcessor(std::string inFile, std::string outFile);
+//  PostProcessor(pcl::PointCloud<pcl::PointXYZ>::Ptr pData, std::string outFile);
   
-  void read();
-  void keepInCylinder(cv::Point3d center, double radius, double height);
+//  pcl::PointCloud<pcl::PointXYZ>::Ptr getDataPP() {return dataPP;}
   
-  void saveAsPCD();
-  void saveAsPLY();
-  void saveAsXYZ();
-  void save();
+//  void read();
+  void keepInCylinder(pcl::PointCloud<pcl::PointXYZ> & dataRaw, pcl::PointCloud<pcl::PointXYZ> & dataPP, pcl::PointXYZ center, double radius, double height);
+  void keepInCylinder(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP, pcl::PointXYZ center, double radius, double height);
+  
+//  void saveAsPCD();
+//  void saveAsPLY();
+//  void saveAsXYZ();
+//  void save();
 
 };
 

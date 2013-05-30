@@ -1,10 +1,13 @@
-#include "Calibration.h"
-#include "PostProcessor.h"
-#include "Scan.h"
 #include <stdio.h>
 #include <stdlib.h>
 //#include <iostream>
 //#include <sstream>
+
+#include "../Calibration.h"
+#include "../DataConverter.h"
+#include "../PostProcessor.h"
+#include "../Scan.h"
+
 
 // Usage ./main [scan.param]
 
@@ -21,10 +24,10 @@ int main(int argc, char ** argv )
   std::string     scan_output_file                     = "data/scan_output.xyz";
   double         scan_step_angle                      = 1;
   std::string     post_proc_output_file                = "data/scan_output_PP.xyz";
+  pcl::PointXYZ   post_proc_cylinder_center            = pcl::PointXYZ(0,0,0);
   double         post_proc_cylinder_radius            = 7;
   double         post_proc_cylinder_height            = 15;
 
-  
   if(argc>1)
   {
   
@@ -83,6 +86,12 @@ int main(int argc, char ** argv )
             {
               sline >> post_proc_output_file;
             }
+            else if (keyword == "#post_proc_cylinder_center")
+            {
+              double x,y,z;
+              sline >> x >> y >> z;
+              post_proc_cylinder_center = pcl::PointXYZ(x,y,z);
+            }
             else if (keyword == "#post_proc_cylinder_radius")
             {
               sline >> post_proc_cylinder_radius;
@@ -107,18 +116,19 @@ int main(int argc, char ** argv )
 //  }
   
   // Recap parameters
-  std::cout << "Parameters: " << std::endl;
-  std::cout << " param_file                           " << param_file << std::endl;
-  std::cout << " cal_needed                           " << cal_needed << std::endl;
-  std::cout << " cal_circular_pattern_radius          " << cal_circular_pattern_radius << std::endl;
-  std::cout << " cal_circular_pattern_number_points   " << cal_circular_pattern_number_points << std::endl;
-  std::cout << " param_name_matrix                    " << param_name_matrix << std::endl;
-  std::cout << " param_name_normal                    " << param_name_normal << std::endl;
-  std::cout << " scan_output_file                     " << scan_output_file << std::endl;
-  std::cout << " scan_step_angle                      " << scan_step_angle << std::endl;
-  std::cout << " post_proc_output_file                " << post_proc_output_file << std::endl;
-  std::cout << " post_proc_cylinder_radius            " << post_proc_cylinder_radius << std::endl;
-  std::cout << " post_proc_cylinder_height            " << post_proc_cylinder_height << std::endl;
+  std::cout << " 1) Parameters: " << std::endl;
+  std::cout << "     param_file                           " << param_file << std::endl;
+  std::cout << "     cal_needed                           " << cal_needed << std::endl;
+  std::cout << "     cal_circular_pattern_radius          " << cal_circular_pattern_radius << std::endl;
+  std::cout << "     cal_circular_pattern_number_points   " << cal_circular_pattern_number_points << std::endl;
+  std::cout << "     param_name_matrix                    " << param_name_matrix << std::endl;
+  std::cout << "     param_name_normal                    " << param_name_normal << std::endl;
+  std::cout << "     scan_output_file                     " << scan_output_file << std::endl;
+  std::cout << "     scan_step_angle                      " << scan_step_angle << std::endl;
+  std::cout << "     post_proc_output_file                " << post_proc_output_file << std::endl;
+  std::cout << "     post_proc_cylinder_center            " << post_proc_cylinder_center << std::endl;
+  std::cout << "     post_proc_cylinder_radius            " << post_proc_cylinder_radius << std::endl;
+  std::cout << "     post_proc_cylinder_height            " << post_proc_cylinder_height << std::endl;
   
   if(cal_needed=="yes")
   {
@@ -127,18 +137,30 @@ int main(int argc, char ** argv )
     cal.save(param_name_matrix,param_name_normal);
   }
   
-  std::cout << "Scanning..." << std::endl;
+  std::cout << " 2) Scan" << std::endl;
   Scan scan(param_file,scan_output_file,scan_step_angle);
   scan.read(param_name_matrix,param_name_normal);
   scan.launch();
   scan.save();
   
-  std::cout << "Post processing..." << std::endl;
-  PostProcessor p(scan.getData(), post_proc_output_file);
-  p.keepInCylinder(cv::Point3d(0,0,0), post_proc_cylinder_radius, post_proc_cylinder_height);
-  p.save();
+  pcl::PointCloud<pcl::PointXYZ> cloud;
+  pcl::PointCloud<pcl::PointXYZ> cloudPP;
+  DataConverter dc;
   
+  // Convert scanned data to cloud
+  dc.convert(scan.getData(),cloud);
+  
+  
+  std::cout << " 3) Post process data" << std::endl;
+  PostProcessor p;//cloud, post_proc_output_file);
+  p.keepInCylinder(cloud, cloudPP, post_proc_cylinder_center, post_proc_cylinder_radius, post_proc_cylinder_height);
+  
+  std::cout << " 4) Save data in " << post_proc_output_file << std::endl;
+  dc.save(post_proc_output_file, cloudPP);
   
   
   return 0;
 }
+
+
+

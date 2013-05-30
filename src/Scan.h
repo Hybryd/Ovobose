@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "DataConverter.h"
 
 #define PI 3.14159265358979323846264
 
@@ -29,7 +30,7 @@ protected:
   std::string                               paramFile;
   std::string                               outputFile;
   int                                       Vcut;       // value for the manual thresholding
-  std::vector<cv::Mat>                      data;       // the set of all measures (vector of vector of points)
+  std::vector<cv::Mat>                      data;       // the set of all measures (vector of cv::Mat)
   cv::Mat                                   matM;       // transformation matrix
   cv::Mat                                   vecN;       // normal vector to the laser plane
   double                                   angle;      // current angle for rotation
@@ -39,6 +40,7 @@ public:
   Scan();
   Scan(std::string pFile, std::string outFile, double stepAng);
   std::vector<cv::Mat> & getData() {return data;}
+//  pcl::PointCloud<pcl::PointXYZ>::Ptr getCloud ();
   
   void read(std::string pNameMatrix, std::string pNameNormal);
   
@@ -46,11 +48,10 @@ public:
   cv::Mat makeRotationMatrix();
   void measure(cv::Mat & current); // called when ready to measure
   
-  void saveAsPCD();
-  void saveAsPLY();
-  void saveAsXYZ();  
+//  void saveAsPCD();
+//  void saveAsPLY();
+//  void saveAsXYZ();  
   void save();
-  ;
 
 };
 

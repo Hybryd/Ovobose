@@ -5,17 +5,40 @@ project( Ovobose )
 find_package( OpenCV REQUIRED )
 find_package( PCL 1.2 REQUIRED )
 
-include_directories(${PCL_INCLUDE_DIRS})
-link_directories(${PCL_LIBRARY_DIRS})
-add_definitions(${PCL_DEFINITIONS})
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+
+# Libraries
+include_directories( ${PCL_INCLUDE_DIRS} )
+link_directories( ${PCL_LIBRARY_DIRS} )
+add_definitions( ${PCL_DEFINITIONS} )
+
+# Avoid depreciated declaration warnings
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations" )
+
+# Executables target folder
+set( EXECUTABLE_OUTPUT_PATH bin/${CMAKE_BUILD_TYPE} )
 
 
-add_executable( ./bin/scan ./src/main_scan.cpp ./src/Calibration.h ./src/Calibration.cpp ./src/PostProcessor.h ./src/PostProcessor.cpp ./src/Scan.h ./src/Scan.cpp)
-target_link_libraries( ./bin/scan ${OpenCV_LIBS} ${PCL_LIBRARIES} )
+# List all common sources
+file( GLOB allsrc src/*.cpp )
 
-add_executable( ./bin/see ./src/main_see.cpp )
-target_link_libraries( ./bin/see ${OpenCV_LIBS} )
+# scan
+file( GLOB main_scan src/scan/* )
+add_executable( scan ${main_scan} ${allsrc} )
+target_link_libraries( scan ${OpenCV_LIBS} ${PCL_LIBRARIES} )
 
-add_executable( ./bin/surfaceReconstruction ./src/main_surfaceReconstruction.cpp )
-target_link_libraries( ./bin/surfaceReconstruction ${PCL_LIBRARIES} )
+# postProcess
+file(GLOB main_postProcess src/postProcess/* )
+add_executable( postProcess ${main_postProcess} ${allsrc})
+target_link_libraries( postProcess ${OpenCV_LIBS} ${PCL_LIBRARIES} )
+
+# see
+file(GLOB main_see src/see/* )
+add_executable( see ${main_see} ${allsrc})
+target_link_libraries( see ${OpenCV_LIBS} ${PCL_LIBRARIES})
+
+# surfaceReconstruction
+file(GLOB main_surfaceReconstruction src/surfaceReconstruction/* )
+add_executable( surfaceReconstruction ${main_surfaceReconstruction} ${allsrc})
+target_link_libraries( surfaceReconstruction ${OpenCV_LIBS} ${PCL_LIBRARIES} )
+
+

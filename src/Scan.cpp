@@ -40,6 +40,12 @@ Scan::Scan(std::string pFile, std::string outFile, double stepAng)
   cvNamedWindow( "Scan" );
 }
 
+//pcl::PointCloud<pcl::PointXYZ>::Ptr Scan::getCloud()
+//{
+//  DataConverter dc(data);
+//  return(dc.getCloud());
+//}
+
 void Scan::read(std::string pNameMatrix, std::string pNameNormal)
 {
   std::string lM = pNameMatrix;
@@ -203,66 +209,70 @@ void Scan::measure(cv::Mat & current)
 }
 
 
-void Scan::saveAsPCD()
-{
-  pcl::PointCloud<pcl::PointXYZ> cloud;
-  pcl::PointXYZ pt;
-  for(size_t i=0;i<data.size();++i)
-  {
-    cloud.push_back(pcl::PointXYZ(data[i].at<double>(0,0),data[i].at<double>(0,1),data[i].at<double>(0,2)));
-  }
-  pcl::io::savePCDFile (outputFile.c_str(), cloud);
-}
+//void Scan::saveAsPCD()
+//{
+//  pcl::PointCloud<pcl::PointXYZ> cloud;
+//  pcl::PointXYZ pt;
+//  for(size_t i=0;i<data.size();++i)
+//  {
+//    cloud.push_back(pcl::PointXYZ(data[i].at<double>(0,0),data[i].at<double>(0,1),data[i].at<double>(0,2)));
+//  }
+//  pcl::io::savePCDFile (outputFile.c_str(), cloud);
+//}
 
-void Scan::saveAsPLY()
-{
-  pcl::PointCloud<pcl::PointXYZ> cloud;
-  pcl::PointXYZ pt;
-  for(size_t i=0;i<data.size();++i)
-  {
-    cloud.push_back(pcl::PointXYZ(data[i].at<double>(0,0),data[i].at<double>(0,1),data[i].at<double>(0,2)));
-  }
-  pcl::io::savePCDFile (outputFile.c_str(), cloud);
-}
+//void Scan::saveAsPLY()
+//{
+//  pcl::PointCloud<pcl::PointXYZ> cloud;
+//  pcl::PointXYZ pt;
+//  for(size_t i=0;i<data.size();++i)
+//  {
+//    cloud.push_back(pcl::PointXYZ(data[i].at<double>(0,0),data[i].at<double>(0,1),data[i].at<double>(0,2)));
+//  }
+//  pcl::io::savePCDFile (outputFile.c_str(), cloud);
+//}
 
 
-// Save according to the XYZ format:
-// X1 Y1 Z1
-// X2 Y2 Z2
-// :  :  :
+//// Save according to the XYZ format:
+//// X1 Y1 Z1
+//// X2 Y2 Z2
+//// :  :  :
 
-void Scan::saveAsXYZ()
-{
-  std::ofstream out(outputFile.c_str());
-  if(!out.is_open())
-  {
-    std::cerr << "ERROR: unable to open " << outputFile << std::endl;
-    exit(-1);
-  }
-  
-  for(size_t i=0;i<data.size();++i)
-  {
-    out << data[i].at<double>(0,0) << " " << data[i].at<double>(0,1) << " " << data[i].at<double>(0,2) << std::endl;
-  }
-}
+//void Scan::saveAsXYZ()
+//{
+//  std::ofstream out(outputFile.c_str());
+//  if(!out.is_open())
+//  {
+//    std::cerr << "ERROR: unable to open " << outputFile << std::endl;
+//    exit(-1);
+//  }
+//  
+//  for(size_t i=0;i<data.size();++i)
+//  {
+//    out << data[i].at<double>(0,0) << " " << data[i].at<double>(0,1) << " " << data[i].at<double>(0,2) << std::endl;
+//  }
+//}
 
 
 void Scan::save()
 {
-  if (outputFile.find(".pcd")==outputFile.size()-4)
-  {
-    saveAsPCD();
-  }
-  else if (outputFile.find(".ply")==outputFile.size()-4)
-  {
-    saveAsPLY();
-  }
-  else
-  {
-    if(outputFile.find(".xyz")!=outputFile.size()-4)
-      outputFile += ".xyz";
-    saveAsXYZ();
-  }
+  DataConverter dc;
+  dc.save(outputFile, data);
+  
+  
+//  if (outputFile.find(".pcd")==outputFile.size()-4)
+//  {
+//    saveAsPCD();
+//  }
+//  else if (outputFile.find(".ply")==outputFile.size()-4)
+//  {
+//    saveAsPLY();
+//  }
+//  else
+//  {
+//    if(outputFile.find(".xyz")!=outputFile.size()-4)
+//      outputFile += ".xyz";
+//    saveAsXYZ();
+//  }
 }
 
 
