@@ -20,8 +20,8 @@ Calibration::Calibration(std::string pFile)
   }
   else
   {
-    std::cerr << "Warning: bad name for output file. Parameters will be saved in \"cal_param.xml\"." << std::endl;
-    paramFile = "cal_param.xml";
+    std::cerr << "WARNING: bad name for output file. Parameters will be saved in param/cal_param.xml" << std::endl;
+    paramFile = "param/cal_param.xml";
   }
   cvNamedWindow( "Calibration" );
 }
@@ -71,7 +71,7 @@ void Calibration::launch(int pNbCal)
   cv::VideoCapture capture = cv::VideoCapture(0);
   if(!capture.isOpened())
   {
-    std::cerr << "Error: unable to open capture video." << std::endl;
+    std::cerr << "ERROR: unable to open capture video." << std::endl;
     exit(-1);
   }
   capture >> image;
@@ -142,7 +142,7 @@ void Calibration::save(std::string pNameMatrix, std::string pNameNormal)
   
   if(pNameMatrix.size()==0 || pNameNormal.size()==0 || pNameMatrix.find(" ") != std::string::npos || pNameNormal.find(" ") != std::string::npos)
   {
-    std::cerr << "Warning: bad name for data. The transformation matrix will be saved as \"matM\" and the normal vector as \"vecN\"." << std::endl;
+    std::cerr << "WARNING: bad name for data. The transformation matrix will be saved as \"matM\" and the normal vector as \"vecN\"." << std::endl;
     lM = "matM";
     lN = "vecN";
   }

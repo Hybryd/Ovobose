@@ -5,8 +5,8 @@ Scan::Scan()
 {
   Vcut=200;
   angle=0;
-  paramFile="param.xml";
-  outputFile="data.xyz";
+  paramFile="param/param.xml";
+  outputFile="data/data.xyz";
   cvNamedWindow( "Scan" );
   stepAngle=2;
 }
@@ -19,7 +19,7 @@ Scan::Scan(std::string pFile, std::string outFile, double stepAng)
   }
   else
   {
-    std::cerr << "Warning: bad name for parameter file. Parameters are read from \"cal_param.xml\"." << std::endl;
+    std::cerr << "Warning: bad name for parameter file. Parameters are read from param/cal_param.xml" << std::endl;
     paramFile = "cal_param.xml";
   }
 //  paramFile = "cal_param.xml";
@@ -30,7 +30,7 @@ Scan::Scan(std::string pFile, std::string outFile, double stepAng)
   }
   else
   {
-    std::cerr << "Warning: bad name for output file. Data will be stored in \"data/data.xyz\"." << std::endl;
+    std::cerr << "Warning: bad name for output file. Data will be stored in data/data.xyz" << std::endl;
     outputFile = "data/data.xyz";
   }
 
@@ -47,7 +47,7 @@ void Scan::read(std::string pNameMatrix, std::string pNameNormal)
   
   if(pNameMatrix.size()==0 || pNameNormal.size()==0 || pNameMatrix.find(" ") != std::string::npos || pNameNormal.find(" ") != std::string::npos)
   {
-    std::cerr << "Warning: bad name for data. The transformation matrix will be saved as \"matM\" and the normal vector as \"vecN\"." << std::endl;
+    std::cerr << "Warning: bad name for data variables. The transformation matrix will be saved in the XML file as \"matM\" and the normal vector as \"vecN\"." << std::endl;
     lM = "matM";
     lN = "vecN";
   }
@@ -81,7 +81,7 @@ void Scan::launch()
   cv::VideoCapture capture = cv::VideoCapture(0);
   if(!capture.isOpened())
   {
-    std::cerr << "Error: unable to open capture video." << std::endl;
+    std::cerr << "ERROR: unable to open capture video" << std::endl;
     exit(-1);
   }
   capture >> image;
@@ -236,7 +236,7 @@ void Scan::saveAsXYZ()
   std::ofstream out(outputFile.c_str());
   if(!out.is_open())
   {
-    std::cerr << "Error: unable to open " << outputFile << std::endl;
+    std::cerr << "ERROR: unable to open " << outputFile << std::endl;
     exit(-1);
   }
   

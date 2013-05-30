@@ -2,30 +2,30 @@
 
 PostProcessor::PostProcessor()
 {
-  std::cerr << "Warning: no name given for the input file." << std::endl << "Input and output file are set to \"data.xyz\" and \"data_PP.xyz\"." << std::endl;
+  std::cerr << "Warning: no name given for the input file." << std::endl << "Input and output file are set to data/data.xyz and data/data_PP.xyz" << std::endl;
   
-  std::ifstream input("data.xyz");
+  std::ifstream input("data/data.xyz");
   if(!input.is_open())
   {
-    std::cerr << "Error: unable to open \"data.xyz\"" << std::endl;
+    std::cerr << "ERROR: unable to open data/data.xyz" << std::endl;
     exit(-1);
   }
   else
   {
-    inputFile = "data.xyz";
+    inputFile = "data/data.xyz";
   }
   
   input.close();
   
-  std::ofstream output("data_PP.xyz");
+  std::ofstream output("data/data_PP.xyz");
   if(!output.is_open())
   {
-    std::cerr << "Error: unable to open \"data_PP.xyz\"" << std::endl;
+    std::cerr << "ERROR: unable to open data/data_PP.xyz" << std::endl;
     exit(-1);
   }
   else
   {
-    outputFile = "data_PP.xyz";
+    outputFile = "data/data_PP.xyz";
   }
   output.close();
   
@@ -40,7 +40,7 @@ PostProcessor::PostProcessor(std::string inFile, std::string outFile)
   std::ifstream input(inFile.c_str());
   if(!input.is_open())
   {
-    std::cerr << "Error: unable to open \""<< inFile << "\"" << std::endl;
+    std::cerr << "ERROR: unable to open " << inFile << std::endl;
     exit(-1);
   }
   else
@@ -52,7 +52,7 @@ PostProcessor::PostProcessor(std::string inFile, std::string outFile)
   std::ofstream output(outFile.c_str());
   if(!output.is_open())
   {
-    std::cerr << "Error: unable to open \""<< outFile << "\"" << std::endl;
+    std::cerr << "ERROR: unable to open "<< outFile << std::endl;
     exit(-1);
   }
   else
@@ -71,7 +71,7 @@ PostProcessor::PostProcessor(std::vector<cv::Mat> & pData, std::string outFile)
   std::ofstream output(outFile.c_str());
   if(!output.is_open())
   {
-    std::cerr << "Error: unable to open \""<< outFile << "\"" << std::endl;
+    std::cerr << "ERROR: unable to open "<< outFile << std::endl;
     exit(-1);
   }
   else
@@ -90,7 +90,7 @@ void PostProcessor::read()
   
   if(!input.is_open())
   {
-    std::cerr << "Error: unable to open \""<< inputFile << "\"" << std::endl;
+    std::cerr << "ERROR: unable to open "<< inputFile << std::endl;
     exit(-1);
   }
 
@@ -167,7 +167,7 @@ void PostProcessor::saveAsXYZ()
   std::ofstream out(outputFile.c_str());
   if(!out.is_open())
   {
-    std::cerr << "Error: unable to open " << outputFile << std::endl;
+    std::cerr << "ERROR: unable to open " << outputFile << std::endl;
     exit(-1);
   }
   

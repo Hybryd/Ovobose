@@ -12,7 +12,7 @@ int main(int argc, char ** argv )
 {
   
   // Default parameters. Don't touch this
-  std::string     param_file                           = "cal_param.xml";
+  std::string     param_file                           = "param/cal_param.xml";
   std::string     cal_needed                           = "yes";
   double         cal_circular_pattern_radius          = 5.6;
   int            cal_circular_pattern_number_points   = 20;

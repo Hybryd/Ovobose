@@ -13,7 +13,7 @@ int main(int argc, char ** argv)
   cv::Mat image;
   if(!capture.isOpened())
   {
-    std::cerr << "Unable to open capture video." << std::endl;
+    std::cerr << "ERROR: Unable to open capture video" << std::endl;
     return -1;
   }
   capture >> image;
