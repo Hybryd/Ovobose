@@ -1,13 +1,13 @@
-#include <pcl/point_types.h>
+#include <fstream>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/vtk_lib_io.h>
-#include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/features/normal_3d.h>
-#include <pcl/surface/gp3.h>
-#include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
+#include <pcl/filters/voxel_grid.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <pcl/surface/gp3.h>
+#include <pcl/point_types.h>
 
-#include <fstream>
 
 // Usage ./surfaceReconstruction inputfile.pcd outputfile.vtk [surf.param]
 

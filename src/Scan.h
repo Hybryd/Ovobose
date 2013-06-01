@@ -1,6 +1,13 @@
 #ifndef SCAN_H
 #define SCAN_H
 
+/*!
+*
+* \file   Scan.h
+* \brief  Header file of scan class.
+*
+*/
+
 #include <cv.h>
 #include <fstream>
 #include <highgui.h>
@@ -17,12 +24,13 @@
 
 #define PI 3.14159265358979323846264
 
-////////////////////////////////////////////////////////////////////
-// Read parameters from a file and scan the laser line to compute //
-// 3D corresponding coordinates.                                  //
-// The output file is aimed to be read by gnuplot                 //
-//                                                                //
-////////////////////////////////////////////////////////////////////
+
+/*!
+*
+* \class Scan
+* \brief Read parameters from a file and scan the laser line to compute 3D corresponding coordinates.
+*
+*/
 
 class Scan
 {
@@ -40,7 +48,6 @@ public:
   Scan();
   Scan(std::string pFile, std::string outFile, double stepAng);
   std::vector<cv::Mat> & getData() {return data;}
-//  pcl::PointCloud<pcl::PointXYZ>::Ptr getCloud ();
   
   void read(std::string pNameMatrix, std::string pNameNormal);
   
@@ -48,9 +55,6 @@ public:
   cv::Mat makeRotationMatrix();
   void measure(cv::Mat & current); // called when ready to measure
   
-//  void saveAsPCD();
-//  void saveAsPLY();
-//  void saveAsXYZ();  
   void save();
 
 };

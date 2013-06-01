@@ -1,6 +1,14 @@
 #ifndef DATACONVERTER_H
 #define DATACONVERTER_H
 
+/*!
+*
+* \file   DataConverter.h
+* \brief  Header file of DataConverter class.
+*
+*/
+
+
 #include <cv.h>
 #include <fstream>
 #include <pcl/io/io.h>
@@ -9,27 +17,20 @@
 #include <pcl/point_types.h>
 #include <string>
 
-// Read XYZ file 
-// Convert data in XYZ file to pcl::PointCloud<pcl::PointXYZ>
-// 
 
+/*!
+*
+* \class DataConverter
+* \brief Contains a set of functions converting data types, from std::vector<cv::Mat> to pcl::PointCloud<pcl::PointXYZ>, std::vector<cv::Mat> to pcl::PointCloud<pcl::PointXYZ>::Ptr. It also allows creating pcl::PointCloud<pcl::PointXYZ> or pcl::PointCloud<pcl::PointXYZ>::Ptr cloud from a PCD, PLY or XYZ file and saving a cloud in such file types.
+*
+*/
 
 class DataConverter
 {
 protected:
-//  pcl::PointCloud<pcl::PointXYZ>::Ptr data; // default format
-//  bool empty;
 
 public:
   DataConverter();
-//  DataConverter(std::string fileName);
-//  DataConverter(pcl::PointCloud<pcl::PointXYZ>::Ptr pData);
-//  DataConverter(std::vector<cv::Mat> & vecMat);
-  
-//  pcl::PointCloud<pcl::PointXYZ>::Ptr getCloudPointXYZ();
-  
-//  pcl::PointCloud<pcl::PointXYZ>::Ptr getCloud();
-//  bool isEmpty() {return empty;}
   
   void convert(std::vector<cv::Mat> & vecMat, pcl::PointCloud<pcl::PointXYZ> & cloud);
   void convert(std::vector<cv::Mat> & vecMat, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);

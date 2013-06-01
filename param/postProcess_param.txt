@@ -1,4 +1,4 @@
 #post_proc_input_file data/bouddha.xyz
-#post_proc_output_file data/bouddha_PP.pcd
+#post_proc_output_file data/bouddha_PP.ply
 #post_proc_cylinder_radius 4
 #post_proc_cylinder_height 5

@@ -22,22 +22,22 @@ set( EXECUTABLE_OUTPUT_PATH bin/${CMAKE_BUILD_TYPE} )
 file( GLOB allsrc src/*.cpp )
 
 # scan
-file( GLOB main_scan src/scan/* )
+file( GLOB main_scan src/scan/*.cpp )
 add_executable( scan ${main_scan} ${allsrc} )
 target_link_libraries( scan ${OpenCV_LIBS} ${PCL_LIBRARIES} )
 
 # postProcess
-file(GLOB main_postProcess src/postProcess/* )
+file(GLOB main_postProcess src/postProcess/*.cpp )
 add_executable( postProcess ${main_postProcess} ${allsrc})
 target_link_libraries( postProcess ${OpenCV_LIBS} ${PCL_LIBRARIES} )
 
 # see
-file(GLOB main_see src/see/* )
+file(GLOB main_see src/see/*.cpp )
 add_executable( see ${main_see} ${allsrc})
 target_link_libraries( see ${OpenCV_LIBS} ${PCL_LIBRARIES})
 
 # surfaceReconstruction
-file(GLOB main_surfaceReconstruction src/surfaceReconstruction/* )
+file(GLOB main_surfaceReconstruction src/surfaceReconstruction/*.cpp )
 add_executable( surfaceReconstruction ${main_surfaceReconstruction} ${allsrc})
 target_link_libraries( surfaceReconstruction ${OpenCV_LIBS} ${PCL_LIBRARIES} )
 

@@ -1,40 +1,47 @@
 #ifndef POSTPROCESSOR_H
 #define POSTPROCESSOR_H
 
+/*!
+*
+* \file   PostProcessor.h
+* \brief  Header file of PostProcessor class.
+*
+*/
+
+// Conflict between OpenCV and PCL about FLAN. Here we don't implement smooth
+
 #include <cv.h>
 #include <fstream>
 #include <iostream>
 #include <pcl/io/io.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
+//#include <pcl/kdtree/kdtree_flann.h>
 #include <pcl/point_types.h>
+//#include <pcl/surface/mls.h>
 #include <string>
 
+
+/*!
+*
+* \class PostProcessor
+* \brief Contains a set of functions that remove points lying outside a domain and smooth points
+*
+*/
 
 class PostProcessor
 {
 protected:
-//  std::string                             inputFile;  // contains raw data
-//  std::string                             outputFile; // contains processed data
-//  pcl::PointCloud<pcl::PointXYZ>::Ptr     data;       // raw data
-//  pcl::PointCloud<pcl::PointXYZ>::Ptr     dataPP;     // processed data
 
 
 public:
+
   PostProcessor();
-//  PostProcessor(std::string inFile, std::string outFile);
-//  PostProcessor(pcl::PointCloud<pcl::PointXYZ>::Ptr pData, std::string outFile);
-  
-//  pcl::PointCloud<pcl::PointXYZ>::Ptr getDataPP() {return dataPP;}
-  
-//  void read();
+
+//  void smooth(pcl::PointCloud<pcl::PointXYZ> & dataRaw, pcl::PointCloud<pcl::PointXYZ> & dataPP, bool polygonalFit, double radius);
+//  void smooth(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP, bool polygonalFit, double radius);
   void keepInCylinder(pcl::PointCloud<pcl::PointXYZ> & dataRaw, pcl::PointCloud<pcl::PointXYZ> & dataPP, pcl::PointXYZ center, double radius, double height);
   void keepInCylinder(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP, pcl::PointXYZ center, double radius, double height);
-  
-//  void saveAsPCD();
-//  void saveAsPLY();
-//  void saveAsXYZ();
-//  void save();
 
 };
 

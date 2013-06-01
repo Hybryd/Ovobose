@@ -121,6 +121,43 @@ PostProcessor::PostProcessor()
 //}
 
 
+//void PostProcessor::smooth(pcl::PointCloud<pcl::PointXYZ> & dataRaw, pcl::PointCloud<pcl::PointXYZ> & dataPP, bool polygonalFit, double radius)
+//{
+////  pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
+////  pcl::PointCloud<pcl::PointNormal> mls_points;
+
+////  // Init object (second point type is for the normals, even if unused)
+////  pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointNormal> mls;
+//// 
+////  mls.setComputeNormals (true);
+
+////  // Set parameters
+////  mls.setInputCloud (cloud);
+////  mls.setPolynomialFit (true);
+////  mls.setSearchMethod (tree);
+////  mls.setSearchRadius (0.03);
+
+////  // Reconstruct
+////  mls.process (mls_points);
+////  pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
+//////  pcl::PointCloud<pcl::PointNormal> mls_points;
+
+////  // Init object (second point type is for the normals, even if unused)
+////  pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointXYZ> mls;
+//// 
+////  mls.setComputeNormals (true);
+
+////  // Set parameters
+////  mls.setInputCloud (dataRaw);
+////  mls.setPolynomialFit (polygonalFit);
+////  mls.setSearchMethod (tree);
+////  mls.setSearchRadius (radius);
+
+////  // Reconstruct
+////  mls.process (data_PP);
+
+//}
+
 void PostProcessor::keepInCylinder(pcl::PointCloud<pcl::PointXYZ> & dataRaw, pcl::PointCloud<pcl::PointXYZ> & dataPP, pcl::PointXYZ center, double radius, double height)
 {
   double x,y,z;
@@ -166,32 +203,34 @@ void PostProcessor::keepInCylinder(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, 
     pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP2 (new pcl::PointCloud<pcl::PointXYZ>);
     dataPP = dataPP2;
   }
-
-  double x,y,z;
-  double r2=radius*radius;
-  for(unsigned i=0;i<dataRaw->size();++i)
-  {
-//    x=data[i].at<double>(0,0);
-//    y=data[i].at<double>(0,1);
-//    z=data[i].at<double>(0,2);
-    x=(*dataRaw)[i].x;
-    y=(*dataRaw)[i].y;
-    z=(*dataRaw)[i].z;
-    if(x*x + y*y <= r2 && center.z <= z && z <= center.z + height)
-    {
-      dataPP->push_back((*dataRaw)[i]);
-    }
     
-    // Progress bar
-    std::cout << "[";//                \r" << (((double) 100*(i+1))/((double)data.size())) << "%\r";
-    for(int k=1;k<=(int)(20*(i+1)/dataRaw->size());++k)
-      std::cout << "|";
-    for(int k=((int)(20*(i+1)/dataRaw->size())); k<20;++k)
-      std::cout << " ";
-    std::cout << "]\r";
-  }
-  std::cout << std::endl;
-  std::cout << "Ratio: " << dataPP->size() << "/" << dataRaw->size() << " (" << (100*(dataRaw->size()-dataPP->size())/dataRaw->size()) << " % won)" << std::endl;
+  keepInCylinder(*dataRaw, *dataPP, center, radius, height);
+
+//  double x,y,z;
+//  double r2=radius*radius;
+//  for(unsigned i=0;i<dataRaw->size();++i)
+//  {
+////    x=data[i].at<double>(0,0);
+////    y=data[i].at<double>(0,1);
+////    z=data[i].at<double>(0,2);
+//    x=(*dataRaw)[i].x;
+//    y=(*dataRaw)[i].y;
+//    z=(*dataRaw)[i].z;
+//    if(x*x + y*y <= r2 && center.z <= z && z <= center.z + height)
+//    {
+//      dataPP->push_back((*dataRaw)[i]);
+//    }
+//    
+//    // Progress bar
+//    std::cout << "[";//                \r" << (((double) 100*(i+1))/((double)data.size())) << "%\r";
+//    for(int k=1;k<=(int)(20*(i+1)/dataRaw->size());++k)
+//      std::cout << "|";
+//    for(int k=((int)(20*(i+1)/dataRaw->size())); k<20;++k)
+//      std::cout << " ";
+//    std::cout << "]\r";
+//  }
+//  std::cout << std::endl;
+//  std::cout << "Ratio: " << dataPP->size() << "/" << dataRaw->size() << " (" << (100*(dataRaw->size()-dataPP->size())/dataRaw->size()) << " % won)" << std::endl;
 }
 
 

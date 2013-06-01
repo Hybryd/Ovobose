@@ -1,6 +1,13 @@
 #ifndef CALIBRATION_H
 #define CALIBRATION_H
 
+/*!
+*
+* \file   Calibration.h
+* \brief  Header file of Calibration class.
+*
+*/
+
 
 #include <cmath>
 #include <cv.h>
@@ -12,7 +19,6 @@
 
 #define PI 3.14159265358979323846264
 
-// Class for the calibration of the system
 
   ////////////////////////////////////////////////////////////////
   // Find the transformation matrix from the calibration points //
@@ -40,6 +46,15 @@
   //                        matMM                 . vecM= vecU //
   //                                                           //
   ///////////////////////////////////////////////////////////////
+
+
+/*!
+*
+* \class Calibration
+* \brief Manages calibration process to compute the transformation matrix from 3D point to their corresponding points on the picture. This matrix and the leaser plane equation (hardcoded) are stored in a XML file.
+*
+*/
+
 
 class Calibration
 {
