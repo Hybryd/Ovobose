@@ -1,3 +1,4 @@
+
 #include <fstream>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/vtk_lib_io.h>
@@ -5,28 +6,24 @@
 #include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/kdtree/kdtree_flann.h>
+#include "../DataConverter.h"
 #include <pcl/surface/gp3.h>
 #include <pcl/point_types.h>
 
 
-// Usage ./surfaceReconstruction inputfile.pcd outputfile.vtk [surf.param]
+
+// Usage: ./surfaceReconstruction surf.param
 
 int main (int argc, char** argv)
 {
-  if(argc < 3)
+  if(argc < 2)
   {
-    std::cerr << "Usage: ./surfaceReconstruction inputfile.pcd outputfile.vtk [surf.param]" << std::endl;
+    std::cerr << "Usage: ./surfaceReconstruction surf.param" << std::endl;
     exit(-1);
   }
 
-  // Check if output file is .vtk
-  std::string outputName(argv[2]);
-  if(outputName.find(".vtk") != outputName.size()-4 )
-  {
-    outputName += ".vtk";
-    std::cout << "WARNING: output file must be VTK. Data will be saved in " << outputName << "." << std::endl;
-  }
-
+  std::string input_name           = "data/test.pcd"; // pcd, ply or xyz file
+  std::string output_name          = "data/test.vtk"; // vtk file
   double vog_leafsize             = .05;
   double sor_outl_tolerance       = 0.5;
   double sor_meanK                = 50;
@@ -39,17 +36,19 @@ int main (int argc, char** argv)
   double gp_max_ang_crit          = 2*M_PI/3;
   double ne_radius                = 0.1;
 
+
+
   // Read parameters
   std::string line;
   std::string keyword;
   std::stringstream sline;
   
-  if(argc > 3)
+  if(argc > 1)
   {
-    std::fstream file(argv[3],std::ios::in);
+    std::fstream file(argv[1],std::ios::in);
     if(file)
     {
-      std::cout << " 1) Read parameters from " << argv[3] << "." << std::endl;
+      std::cout << " 1) Read parameters from " << argv[1] << "." << std::endl;
       while(getline(file,line))
       {
         if(line != "")
@@ -61,7 +60,15 @@ int main (int argc, char** argv)
           
           if(keyword[0] == '#')
           {
-            if      (keyword == "#vog_leafsize")
+            if      (keyword == "#input_name")
+            {
+              sline >> input_name;
+            }
+            else if (keyword == "#output_name")
+            {
+              sline >> output_name;
+            }
+            else if (keyword == "#vog_leafsize")
             {
               sline >> vog_leafsize;
             }
@@ -118,7 +125,7 @@ int main (int argc, char** argv)
     }
     else
     {
-      std::cerr << " 1) WARNING: unable to open " << argv[3] << ". Default parameters are loaded" << std::endl;
+      std::cerr << " 1) WARNING: unable to open " << output_name << ". Default parameters are loaded" << std::endl;
     }
   }
   else
@@ -126,6 +133,16 @@ int main (int argc, char** argv)
     std::cerr << " 1) WARNING: Default parameters are loaded" << std::endl;
   }
   
+    // Check if output file is .vtk
+  
+  if(output_name.find(".vtk") != output_name.size()-4 )
+  {
+    output_name += ".vtk";
+    std::cout << "WARNING: output file must be VTK. Data will be saved in " << output_name << "." << std::endl;
+  }
+  
+  std::cout << "    input_file           " << input_name << std::endl;
+  std::cout << "    output_file          " << output_name << std::endl;
   std::cout << "    vog_leafsize         " << vog_leafsize << std::endl;
   std::cout << "    sor_outl_tolerance   " << sor_outl_tolerance << std::endl;
   std::cout << "    sor_meanK            " << sor_meanK << std::endl;
@@ -141,11 +158,13 @@ int main (int argc, char** argv)
   
 
   // Load input file into a PointCloud<T> with an appropriate type
-  std::cout << " 2) Read data from file " << argv[1] << std::endl;
+  std::cout << " 2) Read data from file " << input_name << std::endl;
+  DataConverter dc;
   pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
-  sensor_msgs::PointCloud2 cloud_blob;
-  pcl::io::loadPCDFile (argv[1], cloud_blob);
-  pcl::fromROSMsg (cloud_blob, *cloud);
+  dc.read(input_name, cloud);
+//  sensor_msgs::PointCloud2 cloud_blob;
+//  pcl::io::loadPCDFile (input_name, cloud_blob);
+//  pcl::fromROSMsg (cloud_blob, *cloud);
   
   
 
@@ -167,7 +186,7 @@ int main (int argc, char** argv)
 
   
 
-  // Normal estimation*
+  // Normal estimation
   std::cout << " 4) Estimate normal vectors" << std::endl;
   pcl::NormalEstimation<pcl::PointXYZ, pcl::Normal> n;
   pcl::PointCloud<pcl::Normal>::Ptr normals (new pcl::PointCloud<pcl::Normal>);
@@ -211,8 +230,8 @@ int main (int argc, char** argv)
 //  std::vector<int> states = gp3.getPointStates();
 
   // Save data
-  cout << " 6) Store data in " << outputName << endl;
-  pcl::io::savePolygonFileVTK(outputName, triangles);
+  cout << " 6) Store data in " << output_name << endl;
+  pcl::io::savePolygonFileVTK(output_name, triangles);
   
   return (0);
 }

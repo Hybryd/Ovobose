@@ -1,0 +1,13 @@
+#input_name data/ball_PP.ply
+#output_name data/ball2.vtk
+#vog_leafsize          .05
+#sor_outl_tolerance    0.5
+#sor_meanK             50
+#mls_search_radius     .1
+#gp_search_radius      .5
+#gp_neigb_mu_crit      2
+#gp_mnn_crit           500
+#gp_max_surf_ang_crit  4
+#gp_min_ang_crit       18
+#gp_max_ang_crit       1.5
+#ne_radius             0.1

@@ -5,7 +5,7 @@
 
 #include "../Calibration.h"
 #include "../DataConverter.h"
-#include "../PostProcessor.h"
+//#include "../PostProcessor.h"
 #include "../Scan.h"
 
 
@@ -23,10 +23,10 @@ int main(int argc, char ** argv )
   std::string     param_name_normal                    = "vecN";
   std::string     scan_output_file                     = "data/scan_output.xyz";
   double         scan_step_angle                      = 1;
-  std::string     post_proc_output_file                = "data/scan_output_PP.xyz";
-  pcl::PointXYZ   post_proc_cylinder_center            = pcl::PointXYZ(0,0,0);
-  double         post_proc_cylinder_radius            = 7;
-  double         post_proc_cylinder_height            = 15;
+//  std::string     post_proc_output_file                = "data/scan_output_PP.xyz";
+//  pcl::PointXYZ   post_proc_cylinder_center            = pcl::PointXYZ(0,0,0);
+//  double         post_proc_cylinder_radius            = 7;
+//  double         post_proc_cylinder_height            = 15;
 
   if(argc>1)
   {
@@ -82,24 +82,24 @@ int main(int argc, char ** argv )
             {
               sline >> scan_step_angle;
             }
-            else if (keyword == "#post_proc_output_file")
-            {
-              sline >> post_proc_output_file;
-            }
-            else if (keyword == "#post_proc_cylinder_center")
-            {
-              double x,y,z;
-              sline >> x >> y >> z;
-              post_proc_cylinder_center = pcl::PointXYZ(x,y,z);
-            }
-            else if (keyword == "#post_proc_cylinder_radius")
-            {
-              sline >> post_proc_cylinder_radius;
-            }
-            else if (keyword == "#post_proc_cylinder_height")
-            {
-              sline >> post_proc_cylinder_height;
-            }
+//            else if (keyword == "#post_proc_output_file")
+//            {
+//              sline >> post_proc_output_file;
+//            }
+//            else if (keyword == "#post_proc_cylinder_center")
+//            {
+//              double x,y,z;
+//              sline >> x >> y >> z;
+//              post_proc_cylinder_center = pcl::PointXYZ(x,y,z);
+//            }
+//            else if (keyword == "#post_proc_cylinder_radius")
+//            {
+//              sline >> post_proc_cylinder_radius;
+//            }
+//            else if (keyword == "#post_proc_cylinder_height")
+//            {
+//              sline >> post_proc_cylinder_height;
+//            }
             else
             {
             
@@ -109,11 +109,11 @@ int main(int argc, char ** argv )
       }
     }
   }
-//  else
-//  {
-//    std::cerr << "Scanning..." << std::endl;
-//    exit(-1);
-//  }
+  else
+  {
+    std::cerr << "Usage: ./scan scan_param.txt" << std::endl;
+    exit(-1);
+  }
   
   // Recap parameters
   std::cout << " 1) Parameters: " << std::endl;
@@ -125,10 +125,10 @@ int main(int argc, char ** argv )
   std::cout << "     param_name_normal                    " << param_name_normal << std::endl;
   std::cout << "     scan_output_file                     " << scan_output_file << std::endl;
   std::cout << "     scan_step_angle                      " << scan_step_angle << std::endl;
-  std::cout << "     post_proc_output_file                " << post_proc_output_file << std::endl;
-  std::cout << "     post_proc_cylinder_center            " << post_proc_cylinder_center << std::endl;
-  std::cout << "     post_proc_cylinder_radius            " << post_proc_cylinder_radius << std::endl;
-  std::cout << "     post_proc_cylinder_height            " << post_proc_cylinder_height << std::endl;
+//  std::cout << "     post_proc_output_file                " << post_proc_output_file << std::endl;
+//  std::cout << "     post_proc_cylinder_center            " << post_proc_cylinder_center << std::endl;
+//  std::cout << "     post_proc_cylinder_radius            " << post_proc_cylinder_radius << std::endl;
+//  std::cout << "     post_proc_cylinder_height            " << post_proc_cylinder_height << std::endl;
   
   if(cal_needed=="yes")
   {
@@ -148,16 +148,18 @@ int main(int argc, char ** argv )
   DataConverter dc;
   
   // Convert scanned data to cloud
-  dc.convert(scan.getData(),cloud);
+  std::vector< std::vector<double> > dat=scan.getData();
+  dc.convert(dat,cloud);
   
   
-  std::cout << " 3) Post process data" << std::endl;
-  PostProcessor p;//cloud, post_proc_output_file);
-  p.keepInCylinder(cloud, cloudPP, post_proc_cylinder_center, post_proc_cylinder_radius, post_proc_cylinder_height);
+//  std::cout << " 3) Post process data" << std::endl;
+//  PostProcessor p;//cloud, post_proc_output_file);
+//  p.keepInCylinder(cloud, cloudPP, post_proc_cylinder_center, post_proc_cylinder_radius, post_proc_cylinder_height);
   
-  std::cout << " 4) Save data in " << post_proc_output_file << std::endl;
-  dc.save(post_proc_output_file, cloudPP);
-  
+//  std::cout << " 4) Save data in " << post_proc_output_file << std::endl;
+//  dc.save(post_proc_output_file, cloudPP);
+  std::cout << " 3) Save data in " << scan_output_file << std::endl;
+  dc.save(scan_output_file, cloud);
   
   return 0;
 }

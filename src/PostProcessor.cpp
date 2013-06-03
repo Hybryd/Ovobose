@@ -121,7 +121,27 @@ PostProcessor::PostProcessor()
 //}
 
 
-//void PostProcessor::smooth(pcl::PointCloud<pcl::PointXYZ> & dataRaw, pcl::PointCloud<pcl::PointXYZ> & dataPP, bool polygonalFit, double radius)
+void PostProcessor::smoothMesh(pcl::PolygonMesh::Ptr meshIn, pcl::PolygonMesh & meshOut, unsigned long int nbIter, double convergence, double relaxFactor, bool edgeSmoothing, bool angle, bool boundarySmoothing)
+{
+  std::cout << "Begin Laplacian VTKSmoothing...";
+  pcl::PolygonMesh output;
+  pcl::MeshSmoothingLaplacianVTK vtk;
+  vtk.setInputMesh(meshIn);
+//  vtk.setNumIter(20000);
+//  vtk.setConvergence(0.0001);
+//  vtk.setRelaxationFactor(0.0001);
+//  vtk.setFeatureEdgeSmoothing(true);
+//  vtk.setFeatureAngle(M_PI/5);
+//  vtk.setBoundarySmoothing(true);
+  vtk.setNumIter(nbIter);
+  vtk.setConvergence(convergence);
+  vtk.setRelaxationFactor(relaxFactor);
+  vtk.setFeatureEdgeSmoothing(edgeSmoothing);
+  vtk.setFeatureAngle(angle);
+  vtk.setBoundarySmoothing(boundarySmoothing);
+  vtk.process(meshOut);
+  std::cout << "Done." << std::endl;
+}
 //{
 ////  pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
 ////  pcl::PointCloud<pcl::PointNormal> mls_points;
@@ -184,7 +204,7 @@ void PostProcessor::keepInCylinder(pcl::PointCloud<pcl::PointXYZ> & dataRaw, pcl
     std::cout << "]\r";
   }
   std::cout << std::endl;
-  std::cout << "Ratio: " << dataPP.size() << "/" << dataRaw.size() << " (" << (100*(dataRaw.size()-dataPP.size())/dataRaw.size()) << " % won)" << std::endl;
+  std::cout << "Ratio: " << dataPP.size() << "/" << dataRaw.size() << " (" << (100*(double)(dataRaw.size()-dataPP.size())/((double)dataRaw.size())) << " % won)" << std::endl;
 }
 
 void PostProcessor::keepInCylinder(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP, pcl::PointXYZ center, double radius, double height)

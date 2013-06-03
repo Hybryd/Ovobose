@@ -4,7 +4,7 @@
 Calibration::Calibration()
 {
   cptMouse = 0;
-  paramFile = "cal_param.xml";
+  paramFile = "param/cal_param.xml";
   cvNamedWindow( "Calibration" );
 }
 
@@ -80,7 +80,7 @@ void Calibration::launch(int pNbCal)
   {
     s.str("");
     s << "Point " << cptMouse << "/" << pNbCal << " (" << (cptMouse*10) << " deg)";
-    cv::putText(image, s.str(), cvPoint(30,30), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.5, cvScalar(200,200,200), 1);  
+    cv::putText(image, s.str(), cvPoint(30,30), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.5, cvScalar(200,200,200), 1);
     
     cv::waitKey(10);
     imshow("Calibration", image);
@@ -129,6 +129,8 @@ void Calibration::launch(int pNbCal)
   vecN.at<double>(1,0) = -1;
   vecN.at<double>(2,0) = 0;
   vecN.at<double>(3,0) = 0;
+  
+  cv::destroyWindow("Calibration");
 
 }
 

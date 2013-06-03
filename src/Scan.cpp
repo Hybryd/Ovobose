@@ -20,7 +20,7 @@ Scan::Scan(std::string pFile, std::string outFile, double stepAng)
   else
   {
     std::cerr << "Warning: bad name for parameter file. Parameters are read from param/cal_param.xml" << std::endl;
-    paramFile = "cal_param.xml";
+    paramFile = "param/cal_param.xml";
   }
 //  paramFile = "cal_param.xml";
   
@@ -40,11 +40,33 @@ Scan::Scan(std::string pFile, std::string outFile, double stepAng)
   cvNamedWindow( "Scan" );
 }
 
-//pcl::PointCloud<pcl::PointXYZ>::Ptr Scan::getCloud()
-//{
-//  DataConverter dc(data);
-//  return(dc.getCloud());
-//}
+
+std::vector< std::vector<double> > Scan::getData()
+{
+  std::vector< std::vector<double> > res;
+  for(int i=0;i<data.size();++i)
+  {
+    std::vector<double> point;
+    point.push_back(data[i].at<double>(0,0));
+    point.push_back(data[i].at<double>(1,0));
+    point.push_back(data[i].at<double>(2,0));
+    res.push_back(point);
+  }
+
+  return res;
+}
+
+
+unsigned long int Scan::getNbPoints()
+{
+//  unsigned long int res=0;
+//  for(int i=0;i<data.size();++i)
+//  {
+//    res+=data[i].rows;
+//  }
+  return data.size();
+}
+
 
 void Scan::read(std::string pNameMatrix, std::string pNameNormal)
 {
@@ -83,6 +105,8 @@ void Scan::launch()
   cv::Mat HSV_image;
   cv::Mat HSV_gray_image;
   cv::Mat HSV_gray_image2;
+  std::stringstream s;
+  int cptRot=0;
 
   cv::VideoCapture capture = cv::VideoCapture(0);
   if(!capture.isOpened())
@@ -143,9 +167,16 @@ void Scan::launch()
     if(key==' ')
     {
       measure(HSV_gray_image2);
+      ++cptRot;
     }
     
-    
+    s.str("");
+    s << "Angle: " << (cptRot*stepAngle) << " deg" << std::endl;
+    cv::putText(HSV_gray_image2, s.str(), cvPoint(30,30), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.5, cvScalar(200,200,200), 1);
+
+    s.str("");
+    s << "Number of scanned points: " << getNbPoints();
+    cv::putText(HSV_gray_image2, s.str(), cvPoint(30,60), cv::FONT_HERSHEY_COMPLEX_SMALL, 0.5, cvScalar(200,200,200), 1);
     
     imshow("Scan", HSV_gray_image2);
     key = cv::waitKey(10);
@@ -256,7 +287,8 @@ void Scan::measure(cv::Mat & current)
 void Scan::save()
 {
   DataConverter dc;
-  dc.save(outputFile, data);
+  std::vector< std::vector<double> > dat = getData();
+  dc.save(outputFile, dat);
   
   
 //  if (outputFile.find(".pcd")==outputFile.size()-4)

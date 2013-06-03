@@ -47,7 +47,9 @@ protected:
 public:
   Scan();
   Scan(std::string pFile, std::string outFile, double stepAng);
-  std::vector<cv::Mat> & getData() {return data;}
+//  std::vector<cv::Mat> & getData() {return data;}
+  std::vector< std::vector<double> > getData();
+  unsigned long int getNbPoints();
   
   void read(std::string pNameMatrix, std::string pNameNormal);
   
