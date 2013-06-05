@@ -9,7 +9,7 @@
 */
 
 
-//#include <cv.h>
+#include <cv_compatible.h>
 #include <fstream>
 #include <pcl/io/io.h>
 #include <pcl/io/pcd_io.h>
@@ -32,8 +32,8 @@ protected:
 public:
   DataConverter();
   
-//  void convert(std::vector<cv::Mat> & vecMat, pcl::PointCloud<pcl::PointXYZ> & cloud);
-//  void convert(std::vector<cv::Mat> & vecMat, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+  void convert(std::vector<cv::Mat> & vecMat, pcl::PointCloud<pcl::PointXYZ> & cloud);
+  void convert(std::vector<cv::Mat> & vecMat, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
   void convert(std::vector< std::vector<double> > & vecMat, pcl::PointCloud<pcl::PointXYZ> & cloud);
   void convert(std::vector< std::vector<double> > & vecMat, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
   

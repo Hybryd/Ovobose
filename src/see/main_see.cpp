@@ -1,4 +1,4 @@
-#include <cv.h>
+#include <cv_compatible.h>
 #include <highgui.h>
 #include <iostream>
 #include <sstream>

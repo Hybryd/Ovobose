@@ -34,30 +34,27 @@ DataConverter::DataConverter()
 //}
 
 
-//void DataConverter::convert(std::vector<cv::Mat> & vecMat, pcl::PointCloud<pcl::PointXYZ> & cloud)
-//{
-////  empty=true;
-//  for(unsigned int i=0; i<vecMat.size(); ++i)
-//  {
-//    cloud.push_back(pcl::PointXYZ(vecMat[i].at<double>(0,0),vecMat[i].at<double>(0,1),vecMat[i].at<double>(0,2)));
-//  }
-////  empty=(data->size()==0);
-//}
+void DataConverter::convert(std::vector<cv::Mat> & vecMat, pcl::PointCloud<pcl::PointXYZ> & cloud)
+{
+//  empty=true;
+  for(unsigned int i=0; i<vecMat.size(); ++i)
+  {
+    cloud.push_back(pcl::PointXYZ(vecMat[i].at<double>(0,0),vecMat[i].at<double>(0,1),vecMat[i].at<double>(0,2)));
+  }
+//  empty=(data->size()==0);
+}
 
-//void DataConverter::convert(std::vector<cv::Mat> & vecMat, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
-//{
-//  // allocate memory if cloud is NULL
-//  if(cloud == NULL)
-//  {
-//    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud2 (new pcl::PointCloud<pcl::PointXYZ>);
-//    cloud = cloud2;
-//  }
-//  
-//  for(unsigned int i=0; i<vecMat.size(); ++i)
-//  {
-//    cloud->push_back(pcl::PointXYZ(vecMat[i].at<double>(0,0),vecMat[i].at<double>(0,1),vecMat[i].at<double>(0,2)));
-//  }
-//}
+void DataConverter::convert(std::vector<cv::Mat> & vecMat, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud)
+{
+  // allocate memory if cloud is NULL
+  if(cloud == NULL)
+  {
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloud2 (new pcl::PointCloud<pcl::PointXYZ>);
+    cloud = cloud2;
+  }
+  
+  convert(vecMat, *cloud);
+}
 
 
 void DataConverter::convert(std::vector< std::vector<double> > & vecMat, pcl::PointCloud<pcl::PointXYZ> & cloud)

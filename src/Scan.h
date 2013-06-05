@@ -8,7 +8,7 @@
 *
 */
 
-#include <cv.h>
+#include <cv_compatible.h>
 #include <fstream>
 #include <highgui.h>
 #include <iostream>

@@ -142,41 +142,43 @@ void PostProcessor::smoothMesh(pcl::PolygonMesh::Ptr meshIn, pcl::PolygonMesh & 
   vtk.process(meshOut);
   std::cout << "Done." << std::endl;
 }
-//{
-////  pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
-////  pcl::PointCloud<pcl::PointNormal> mls_points;
 
-////  // Init object (second point type is for the normals, even if unused)
-////  pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointNormal> mls;
-//// 
-////  mls.setComputeNormals (true);
+void PostProcessor::smoothCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP, bool polygonalFit, double radius)
+{
+//  pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
+//  pcl::PointCloud<pcl::PointNormal> mls_points;
 
-////  // Set parameters
-////  mls.setInputCloud (cloud);
-////  mls.setPolynomialFit (true);
-////  mls.setSearchMethod (tree);
-////  mls.setSearchRadius (0.03);
+//  // Init object (second point type is for the normals, even if unused)
+//  pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointNormal> mls;
+// 
+//  mls.setComputeNormals (true);
 
-////  // Reconstruct
-////  mls.process (mls_points);
-////  pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
-//////  pcl::PointCloud<pcl::PointNormal> mls_points;
+//  // Set parameters
+//  mls.setInputCloud (dataRaw);
+//  mls.setPolynomialFit (true);
+//  mls.setSearchMethod (tree);
+//  mls.setSearchRadius (0.03);
 
-////  // Init object (second point type is for the normals, even if unused)
-////  pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointXYZ> mls;
-//// 
-////  mls.setComputeNormals (true);
+//  // Reconstruct
+//  mls.process (mls_points);
+  pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointNormal> mls_points;
 
-////  // Set parameters
-////  mls.setInputCloud (dataRaw);
-////  mls.setPolynomialFit (polygonalFit);
-////  mls.setSearchMethod (tree);
-////  mls.setSearchRadius (radius);
+  // Init object (second point type is for the normals, even if unused)
+  pcl::MovingLeastSquares<pcl::PointXYZ, pcl::PointXYZ> mls;
+ 
+  mls.setComputeNormals (false);
 
-////  // Reconstruct
-////  mls.process (data_PP);
+  // Set parameters
+  mls.setInputCloud (dataRaw);
+  mls.setPolynomialFit (polygonalFit);
+  mls.setSearchMethod (tree);
+  mls.setSearchRadius (radius);
 
-//}
+  // Reconstruct
+  mls.process (*dataPP);
+
+}
 
 void PostProcessor::keepInCylinder(pcl::PointCloud<pcl::PointXYZ> & dataRaw, pcl::PointCloud<pcl::PointXYZ> & dataPP, pcl::PointXYZ center, double radius, double height)
 {
