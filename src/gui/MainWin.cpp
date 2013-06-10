@@ -45,7 +45,7 @@ MainWin::MainWin()
 //  central->setLayout(layout);
   
   tabs = new QTabWidget(this);
-  tabs->setGeometry(5,5,this->width()-10,this->height()-10);
+  tabs->setGeometry(BORDER,BORDER,this->width()-2*BORDER,this->height()-3*BORDER - HEIGHT_PROGRESS);
   
     pageCal = new QWidget;
       vbox1 = new QVBoxLayout;
@@ -107,10 +107,11 @@ MainWin::MainWin()
           
             // Normal vector
             groupVec = new QGroupBox(tr("Normal vector"));
-            groupVec->setAlignment(Qt::AlignHCenter);
+//            groupVec->setAlignment(Qt::AlignHCenter);
         
               
               gridVec = new QGridLayout;
+              gridVec->setAlignment(Qt::AlignHCenter);
                 for(int i=0;i<3;++i)
                 {
                   labVec.push_back(new QLabel("0",this));
@@ -181,14 +182,26 @@ MainWin::MainWin()
     pageCal->setLayout(vbox1);
 
     pageScan = new QWidget;
-    
-    
+
+  
   tabs->addTab(pageCal, "Calibration");
+  tabs->setTabEnabled(0,true);
   tabs->addTab(pageScan, "Scan");
+  tabs->setTabEnabled(1,false);
   
   tabs->addAction(actionOpenParamFile);
   tabs->addAction(actionSaveFile);
   tabs->addAction(actionQuit);
+  
+  
+  progress = new QProgressBar(this);
+  progress->setVisible(false);
+  progress->setMaximumHeight(HEIGHT_PROGRESS);
+  statusBar()->addWidget(progress, 1);
+//  statBar->setSizeGripEnabled(false);
+//  this->StatusBarLayout->addWidget(statBar);
+  statusBar()->showMessage(tr("Waiting for parameters"));
+  
   
   loadDefaultParameters();
  
@@ -205,6 +218,14 @@ void MainWin::loadDefaultParameters()
   scan_output_file                     = "";//"data/scan_output.xyz";
   scan_step_angle                      = 0; //1;
 }
+
+
+bool MainWin::checkIfCamera()
+{
+  cv::VideoCapture capture = cv::VideoCapture(0);
+  return(capture.isOpened());
+}
+
 
 
 void MainWin::openParamFile()
@@ -351,14 +372,45 @@ void MainWin::openParamFile()
 //  std::cout << "     scan_output_file                     " << scan_output_file << std::endl;
 //  std::cout << "     scan_step_angle                      " << scan_step_angle << std::endl;
 //  
+  
+
+  if(checkIfParamOk())
+  {
+    tabs->setTabEnabled(1,true);
+    statusBar()->showMessage(tr("Scan ready"));
+  }
+
 }
+
+
+// True if there exists at least one non zero element in matM and vecN 
+bool MainWin::checkIfParamOk()
+{
+  bool res=false;
+  for(int i=0;i<3;++i)
+  {
+    for(int j=0;j<4;++j)
+    {
+      res |= (matM.at<double>(i,j) != 0);
+    }
+    res |= (vecN.at<double>(i,0) != 0);
+  }
+  return res;
+}
+
 
 void MainWin::calibrate()
 {
-  Calibration cal(param_file);
-  cal.circularPattern(cal_circular_pattern_number_points,cal_circular_pattern_radius);
-  cal.save("matM","vecN");
-
+  if(!checkIfCamera())
+  {
+    statusBar()->showMessage(tr("No camera detected"), 5000);
+  }
+  else
+  {
+    Calibration cal(param_file);
+    cal.circularPattern(cal_circular_pattern_number_points,cal_circular_pattern_radius);
+    cal.save("matM","vecN");
+  }
 }
 
 

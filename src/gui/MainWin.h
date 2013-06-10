@@ -1,6 +1,11 @@
 #ifndef MAINWIN_H
 #define MAINWIN_H
 
+
+#define BORDER 5
+#define HEIGHT_PROGRESS 15
+
+
 #include <cv.h> 
 #include <iostream>
 #include <QtGui>
@@ -48,14 +53,17 @@ protected:
   std::vector< QLabel * > labVec;
   QLabel * labBot;
   QWidget *pageScan;
+  QProgressBar *progress;
 
 public:
   MainWin();
   void loadDefaultParameters();
+  bool checkIfCamera();
     
 public slots :
   
   void openParamFile();
+  bool checkIfParamOk();
   void calibrate();
   void saveFile();
   void newScan();
