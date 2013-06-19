@@ -246,140 +246,153 @@ void MainWin::openParamFile()
                                                     tr("Parameter files (*.xml)")
                                                  );
                                                  
-                                                 
-  std::string lM = "matM";
-  std::string lN = "vecN";
   
-//  if(pNameMatrix.size()==0 || pNameNormal.size()==0 || pNameMatrix.find(" ") != std::string::npos || pNameNormal.find(" ") != std::string::npos)
-//  {
-//    std::cerr << "Warning: bad name for data variables. The transformation matrix will be saved in the XML file as \"matM\" and the normal vector as \"vecN\"." << std::endl;
-//    lM = "matM";
-//    lN = "vecN";
-//  }
-//  paramFile = "cal_param.xml";
-  cv::FileStorage fs(filename.toUtf8().constData(), cv::FileStorage::READ); // parameters file
-  
-//  cv::Mat matM,vecN;
-  matM.create(3,4,cv::DataType<double>::type);
-  vecN.create(4,1,cv::DataType<double>::type);
-  
-  fs[lM] >> matM;
-  fs[lN] >> vecN;
-  
-  // upate display of matrix
-  
-  for(int i=0;i<3;++i)
+  if(filename != "")
   {
-    for(int j=0;j<4;++j)
+                                                   
+    std::string lM = "matM";
+    std::string lN = "vecN";
+    
+  //  if(pNameMatrix.size()==0 || pNameNormal.size()==0 || pNameMatrix.find(" ") != std::string::npos || pNameNormal.find(" ") != std::string::npos)
+  //  {
+  //    std::cerr << "Warning: bad name for data variables. The transformation matrix will be saved in the XML file as \"matM\" and the normal vector as \"vecN\"." << std::endl;
+  //    lM = "matM";
+  //    lN = "vecN";
+  //  }
+  //  paramFile = "cal_param.xml";
+    cv::FileStorage fs(filename.toUtf8().constData(), cv::FileStorage::READ); // parameters file
+    
+  //  cv::Mat matM,vecN;
+    matM.create(3,4,cv::DataType<double>::type);
+    vecN.create(4,1,cv::DataType<double>::type);
+    
+    fs[lM] >> matM;
+    fs[lN] >> vecN;
+    
+    // upate display of matrix
+    
+    for(int i=0;i<3;++i)
     {
-      labMat[i][j]->setText(QString::number(matM.at<double>(i,j)));
+      for(int j=0;j<4;++j)
+      {
+        QString s("");
+        QString number(QString::number(matM.at<double>(i,j)));
+        int k=0;
+        while (k<number .size() && k<4)
+        {
+          s += number[k];
+          ++k;
+        }
+        labMat[i][j]->setAlignment(Qt::AlignCenter);
+        labMat[i][j]->setText(s);
+      }
+    }
+    
+    for(int i=0;i<3;++i)
+    {
+      labVec[i]->setAlignment(Qt::AlignCenter);
+      labVec[i]->setText(QString::number(vecN.at<double>(i,0)));
+    }
+                                                     
+  //   // Read parameters
+  //  std::string line;
+  //  std::string keyword;
+  //  std::stringstream sline;
+  //  std::cout << "IN OPEN " << filename.toUtf8().constData() << std::endl;
+  //  std::fstream file(filename.toUtf8().constData(),std::ios::in);
+  //  if(file)
+  //  {
+  //    while(getline(file,line))
+  //    {
+  //      if(line != "") // avoids empty lines
+  //      {
+  //        sline.clear();
+  //        sline.str("");
+  //        sline << line;
+  //        sline >> keyword;
+  //        // Parser
+  //        if(keyword[0] == '#')
+  //        {
+  //          if      (keyword == "#param_file")
+  //          {
+  //            sline >> param_file;
+  //          }
+  ////          else if (keyword == "#cal_needed")
+  ////          {
+  ////            sline >> cal_needed;
+  ////          }
+  //          else if (keyword == "#cal_circular_pattern_radius")
+  //          {
+  //            sline >> cal_circular_pattern_radius;
+  //          }
+  //          else if (keyword == "#cal_circular_pattern_number_points")
+  //          {
+  //            sline >> cal_circular_pattern_number_points;
+  //          }
+  ////          else if (keyword == "#param_name_matrix")
+  ////          {
+  ////            sline >> param_name_matrix;
+  ////          }
+  ////          else if (keyword == "#param_name_normal")
+  ////          {
+  ////            sline >> param_name_normal;
+  ////          }
+  //          else if (keyword == "#scan_output_file")
+  //          {
+  //            sline >> scan_output_file;
+  //          }
+  //          else if (keyword == "#scan_step_angle")
+  //          {
+  //            sline >> scan_step_angle;
+  //          }
+  ////            else if (keyword == "#post_proc_output_file")
+  ////            {
+  ////              sline >> post_proc_output_file;
+  ////            }
+  ////            else if (keyword == "#post_proc_cylinder_center")
+  ////            {
+  ////              double x,y,z;
+  ////              sline >> x >> y >> z;
+  ////              post_proc_cylinder_center = pcl::PointXYZ(x,y,z);
+  ////            }
+  ////            else if (keyword == "#post_proc_cylinder_radius")
+  ////            {
+  ////              sline >> post_proc_cylinder_radius;
+  ////            }
+  ////            else if (keyword == "#post_proc_cylinder_height")
+  ////            {
+  ////              sline >> post_proc_cylinder_height;
+  ////            }
+  //          else
+  //          {
+  //          
+  //          }
+  //        }
+  //      }
+  //    }
+  //  }
+  //  else
+  //  {
+  //    std::cout << "unable to open file" << std::endl;
+  //  }
+  //  std::cout << " 1) Parameters: " << std::endl;
+  //  std::cout << "     param_file                           " << param_file << std::endl;
+  ////  std::cout << "     cal_needed                           " << cal_needed << std::endl;
+  //  std::cout << "     cal_circular_pattern_radius          " << cal_circular_pattern_radius << std::endl;
+  //  std::cout << "     cal_circular_pattern_number_points   " << cal_circular_pattern_number_points << std::endl;
+  ////  std::cout << "     param_name_matrix                    " << param_name_matrix << std::endl;
+  ////  std::cout << "     param_name_normal                    " << param_name_normal << std::endl;
+  //  std::cout << "     scan_output_file                     " << scan_output_file << std::endl;
+  //  std::cout << "     scan_step_angle                      " << scan_step_angle << std::endl;
+  //  
+    
+
+    if(checkIfParamOk())
+    {
+      tabs->setTabEnabled(1,true);
+      statusBar()->showMessage(tr("Scan ready"));
     }
   }
-  
-  for(int i=0;i<3;++i)
-  {
-    labVec[i]->setText(QString::number(vecN.at<double>(i,0)));
-  }
-                                                   
-//   // Read parameters
-//  std::string line;
-//  std::string keyword;
-//  std::stringstream sline;
-//  std::cout << "IN OPEN " << filename.toUtf8().constData() << std::endl;
-//  std::fstream file(filename.toUtf8().constData(),std::ios::in);
-//  if(file)
-//  {
-//    while(getline(file,line))
-//    {
-//      if(line != "") // avoids empty lines
-//      {
-//        sline.clear();
-//        sline.str("");
-//        sline << line;
-//        sline >> keyword;
-//        // Parser
-//        if(keyword[0] == '#')
-//        {
-//          if      (keyword == "#param_file")
-//          {
-//            sline >> param_file;
-//          }
-////          else if (keyword == "#cal_needed")
-////          {
-////            sline >> cal_needed;
-////          }
-//          else if (keyword == "#cal_circular_pattern_radius")
-//          {
-//            sline >> cal_circular_pattern_radius;
-//          }
-//          else if (keyword == "#cal_circular_pattern_number_points")
-//          {
-//            sline >> cal_circular_pattern_number_points;
-//          }
-////          else if (keyword == "#param_name_matrix")
-////          {
-////            sline >> param_name_matrix;
-////          }
-////          else if (keyword == "#param_name_normal")
-////          {
-////            sline >> param_name_normal;
-////          }
-//          else if (keyword == "#scan_output_file")
-//          {
-//            sline >> scan_output_file;
-//          }
-//          else if (keyword == "#scan_step_angle")
-//          {
-//            sline >> scan_step_angle;
-//          }
-////            else if (keyword == "#post_proc_output_file")
-////            {
-////              sline >> post_proc_output_file;
-////            }
-////            else if (keyword == "#post_proc_cylinder_center")
-////            {
-////              double x,y,z;
-////              sline >> x >> y >> z;
-////              post_proc_cylinder_center = pcl::PointXYZ(x,y,z);
-////            }
-////            else if (keyword == "#post_proc_cylinder_radius")
-////            {
-////              sline >> post_proc_cylinder_radius;
-////            }
-////            else if (keyword == "#post_proc_cylinder_height")
-////            {
-////              sline >> post_proc_cylinder_height;
-////            }
-//          else
-//          {
-//          
-//          }
-//        }
-//      }
-//    }
-//  }
-//  else
-//  {
-//    std::cout << "unable to open file" << std::endl;
-//  }
-//  std::cout << " 1) Parameters: " << std::endl;
-//  std::cout << "     param_file                           " << param_file << std::endl;
-////  std::cout << "     cal_needed                           " << cal_needed << std::endl;
-//  std::cout << "     cal_circular_pattern_radius          " << cal_circular_pattern_radius << std::endl;
-//  std::cout << "     cal_circular_pattern_number_points   " << cal_circular_pattern_number_points << std::endl;
-////  std::cout << "     param_name_matrix                    " << param_name_matrix << std::endl;
-////  std::cout << "     param_name_normal                    " << param_name_normal << std::endl;
-//  std::cout << "     scan_output_file                     " << scan_output_file << std::endl;
-//  std::cout << "     scan_step_angle                      " << scan_step_angle << std::endl;
-//  
-  
-
-  if(checkIfParamOk())
-  {
-    tabs->setTabEnabled(1,true);
-    statusBar()->showMessage(tr("Scan ready"));
-  }
-
 }
 
 
