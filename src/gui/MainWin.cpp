@@ -2,7 +2,7 @@
  
 MainWin::MainWin()
 {
-  resize(600,400);
+  
   setWindowTitle(tr("Ovobose"));
 //  QMenu *menuFile = menuBar()->addMenu("&File");
   
@@ -27,25 +27,28 @@ MainWin::MainWin()
   actionQuit->setShortcut(QKeySequence(tr("Ctrl+Q")));  
   
   
-//  // Central widget
-//  QWidget *central = new QWidget;
-//  setCentralWidget(central);
-//  QFormLayout *layout = new QFormLayout;
-
-//  // Button calibration
-//  QPushButton *butCalibration = new QPushButton("Calibrate",this);
-//  QAction *actionCalibration = new QAction("&Calibration", this);
-//  connect(actionCalibration, SIGNAL(triggered()), this, SLOT(calibrate()));
-//  layout->addRow(butCalibration);
-//  
-//  // Labels for parameters
-////  QLabel *lab = new QLabel(tr("Parameters for calibration"), this);
-
-
-//  central->setLayout(layout);
+  widCam = new QOpenCVWidget(this);
+  labCam = new QLabel(this);
+  camera = cv::VideoCapture(0);
+  camera.set(CV_CAP_PROP_FRAME_WIDTH, 700 );
+  camera.set(CV_CAP_PROP_FRAME_HEIGHT, 700 );
+  
+  if(!camera.isOpened())
+  {
+    
+  }
+  camera >> imgCam;
+  widCam->resize(imgCam.cols+2*BORDER,imgCam.rows+2*BORDER);
+  
+  
+  streamCpt = startTimer(100);
+  
+  
+  
+  
   
   tabs = new QTabWidget(this);
-  tabs->setGeometry(BORDER,BORDER,this->width()-2*BORDER,this->height()-3*BORDER - HEIGHT_PROGRESS);
+  tabs->setGeometry(BORDER,BORDER,widCam->width()+2*BORDER,widCam->height()+2*BORDER + HEIGHT_PROGRESS+100);
   
     pageCal = new QWidget;
       vbox1 = new QVBoxLayout;
@@ -95,20 +98,10 @@ MainWin::MainWin()
                 }
               }
               
-//                QLabel * mat00 = new QLabel("0",this);  QLabel * mat01 = new QLabel("0",this); QLabel * mat02 = new QLabel("0",this);
-//                QLabel * mat10 = new QLabel("0",this);  QLabel * mat11 = new QLabel("0",this); QLabel * mat12 = new QLabel("0",this);
-//                QLabel * mat20 = new QLabel("0",this);  QLabel * mat21 = new QLabel("0",this); QLabel * mat22 = new QLabel("0",this);
-//              gridMat->addWidget(mat00,0,0); gridMat->addWidget(mat01,0,1); gridMat->addWidget(mat02,0,2);
-//              gridMat->addWidget(mat10,1,0); gridMat->addWidget(mat11,1,1); gridMat->addWidget(mat12,1,2);
-//              gridMat->addWidget(mat20,2,0); gridMat->addWidget(mat21,2,1); gridMat->addWidget(mat22,2,2);
-//              vbox2->addWidget(butOpenParamFile);
-              
             groupMat->setLayout(gridMat);
           
             // Normal vector
             groupVec = new QGroupBox(tr("Normal vector"));
-//            groupVec->setAlignment(Qt::AlignHCenter);
-        
               
               gridVec = new QGridLayout;
               gridVec->setAlignment(Qt::AlignHCenter);
@@ -120,13 +113,6 @@ MainWin::MainWin()
               {
                 gridVec->addWidget(labVec[i],i,0);
               }
-//                QLabel * vec00 = new QLabel("0",this);
-//                QLabel * vec10 = new QLabel("0",this);
-//                QLabel * vec20 = new QLabel("0",this);
-//              gridVec->addWidget(vec00,0,0);
-//              gridVec->addWidget(vec10,1,0);
-//              gridVec->addWidget(vec20,2,0);
-//              vbox2->addWidget(butOpenParamFile);
               
             groupVec->setLayout(gridVec);
           
@@ -134,48 +120,12 @@ MainWin::MainWin()
           hbox1->addWidget(groupBut);  
           hbox1->addWidget(groupMat);
           hbox1->addWidget(groupVec);
-          
-        
-        
         
         groupTop->setLayout(hbox1);
-
-
-
-        labBot = new QLabel("WEBCAM ICI");
-      
-      
-      
-      
-      
-//        QHBoxLayout *hbox1 = new QHBoxLayout;
-//          
-//          QVBoxLayout *vbox2 = new QVBoxLayout;
-//          
-//            // Button calibration
-//            QPushButton *butCalibration = new QPushButton("Calibrate",this);
-//            connect(butCalibration, SIGNAL(clicked()), this, SLOT(calibrate()));
-//            
-//            // Button open parameters file
-//            QPushButton *butOpenParamFile = new QPushButton("Open parameter file",this);
-//            connect(butOpenParamFile, SIGNAL(clicked()), this, SLOT(openParamFile()));
-//        
-//          vbox2->addWidget(butCalibration);
-//          vbox2->addWidget(butOpenParamFile);
-//        
-//        
-//          QGroupBox * gridMat = new QGridLayout(this);
-//            QLabel * mat00 = new QLabel(this);  QLabel * mat01 = new QLabel(this); QLabel * mat02 = new QLabel(this);
-//            QLabel * mat10 = new QLabel(this);  QLabel * mat11 = new QLabel(this); QLabel * mat12 = new QLabel(this);
-//            QLabel * mat20 = new QLabel(this);  QLabel * mat21 = new QLabel(this); QLabel * mat22 = new QLabel(this);
-//          
-//        hbox1->addLayout(vbox2);
-//        hbox1->addLayout(vbox2);
-//        
       
       
       vbox1->addWidget(groupTop);
-      vbox1->addWidget(labBot);
+      vbox1->addWidget(widCam);
       
       
       
@@ -198,13 +148,11 @@ MainWin::MainWin()
   progress->setVisible(false);
   progress->setMaximumHeight(HEIGHT_PROGRESS);
   statusBar()->addWidget(progress, 1);
-//  statBar->setSizeGripEnabled(false);
-//  this->StatusBarLayout->addWidget(statBar);
   statusBar()->showMessage(tr("Waiting for parameters"));
   
   
   loadDefaultParameters();
- 
+  resize(tabs->width() + 2*BORDER,tabs->height()+2*BORDER);
 }
 
 
@@ -230,14 +178,6 @@ bool MainWin::checkIfCamera()
 
 void MainWin::openParamFile()
 {
-//  std::string     param_file                           = "param/cal_param.xml";
-//  std::string     cal_needed                           = "yes";
-//  double         cal_circular_pattern_radius          = 5.6;
-//  int            cal_circular_pattern_number_points   = 20;
-//  std::string     param_name_matrix                    = "matM";
-//  std::string     param_name_normal                    = "vecN";
-//  std::string     scan_output_file                     = "data/scan_output.xyz";
-//  double         scan_step_angle                      = 1;
 
   QString filename = QFileDialog::getOpenFileName( 
                                                     this, 
@@ -253,16 +193,9 @@ void MainWin::openParamFile()
     std::string lM = "matM";
     std::string lN = "vecN";
     
-  //  if(pNameMatrix.size()==0 || pNameNormal.size()==0 || pNameMatrix.find(" ") != std::string::npos || pNameNormal.find(" ") != std::string::npos)
-  //  {
-  //    std::cerr << "Warning: bad name for data variables. The transformation matrix will be saved in the XML file as \"matM\" and the normal vector as \"vecN\"." << std::endl;
-  //    lM = "matM";
-  //    lN = "vecN";
-  //  }
-  //  paramFile = "cal_param.xml";
+  
     cv::FileStorage fs(filename.toUtf8().constData(), cv::FileStorage::READ); // parameters file
     
-  //  cv::Mat matM,vecN;
     matM.create(3,4,cv::DataType<double>::type);
     vecN.create(4,1,cv::DataType<double>::type);
     
@@ -420,9 +353,75 @@ void MainWin::calibrate()
   }
   else
   {
-    Calibration cal(param_file);
-    cal.circularPattern(cal_circular_pattern_number_points,cal_circular_pattern_radius);
-    cal.save("matM","vecN");
+//    Calibration cal(param_file);
+    Calibration cal;
+//    cal.circularPattern(cal_circular_pattern_number_points,cal_circular_pattern_radius);
+    cal.circularPattern(20,5.6);
+    matM = cal.getMat();
+    vecN = cal.getVec();
+    
+    
+    // update display (put in a function)
+    for(int i=0;i<3;++i)
+    {
+      for(int j=0;j<4;++j)
+      {
+        QString s("");
+        QString number(QString::number(matM.at<double>(i,j)));
+        int k=0;
+        while (k<number.size() && k<4)
+        {
+          s += number[k];
+          ++k;
+        }
+        labMat[i][j]->setAlignment(Qt::AlignCenter);
+        labMat[i][j]->setText(s);
+      }
+    }
+    
+    for(int i=0;i<3;++i)
+    {
+      labVec[i]->setAlignment(Qt::AlignCenter);
+      labVec[i]->setText(QString::number(vecN.at<double>(i,0)));
+    }
+    
+    
+
+    
+//    cal.save("matM","vecN");
+    if(checkIfParamOk())
+    {
+      tabs->setTabEnabled(1,true);
+      statusBar()->showMessage(tr("Scan ready"));
+    }
+  }
+}
+
+void MainWin::saveCalibrationParam()
+{
+  QString filename = QFileDialog::getSaveFileName(  
+                                                    this, 
+                                                    tr("Save calibration parameters"), 
+                                                    QDir::currentPath(), 
+                                                    tr("All files (*.xml)")
+                                                 );
+  if(filename != "")
+  {
+
+    DataConverter dc;
+    std::vector<std::string> varNames;
+    std::vector<cv::Mat> vars;
+    
+    varNames.push_back("matM");
+    varNames.push_back("vecN");
+    
+    vars.push_back(matM);
+    vars.push_back(vecN);
+    dc.saveInXML(filename.toUtf8().constData(), varNames, vars);
+  }
+  else
+  {
+    std::cerr << "ERROR in MainWin::saveCalibrationParam : wrong file name." << std::endl;
   }
 }
 
@@ -436,6 +435,16 @@ void MainWin::saveFile()
                                                     QDir::currentPath(), 
                                                     tr("All files (*.*)")
                                                  );
+}
+
+
+void MainWin::timerEvent(QTimerEvent* e)
+{
+	if(e->timerId()==streamCpt)
+	{
+		camera >> imgCam;
+		widCam->putImage(imgCam);
+	}
 }
 
 

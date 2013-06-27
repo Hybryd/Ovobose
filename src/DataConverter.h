@@ -43,6 +43,8 @@ public:
   void save(std::string fileName, std::vector< std::vector<double> > & vecMat);
   void save(std::string fileName, pcl::PointCloud<pcl::PointXYZ> & cloud);
   void save(std::string fileName, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+  
+  void saveInXML(std::string fileName, std::vector<std::string> varNames, std::vector<cv::Mat> vars );
 
 };
 

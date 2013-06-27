@@ -6,12 +6,14 @@
 #define HEIGHT_PROGRESS 15
 
 
-#include <cv.h> 
+#include <cv.h>
+#include <highgui.h>
 #include <iostream>
 #include <QtGui>
 #include "../Calibration.h"
 #include "../DataConverter.h"
 #include "../Scan.h"
+#include "QOpenCVWidget.h"
 
  
 class MainWin : public QMainWindow
@@ -26,10 +28,15 @@ protected:
 //  bool           cal_needed;
   double         cal_circular_pattern_radius;
   int            cal_circular_pattern_number_points;
-//  std::string     param_name_matrix;
-//  std::string     param_name_normal;
   std::string     scan_output_file;
   double         scan_step_angle;
+  
+  cv::VideoCapture camera;
+  
+  QOpenCVWidget   * widCam;
+  QLabel          * labCam;
+	cv::Mat           imgCam;
+	int streamCpt;
   
   
   // Qt variables
@@ -55,6 +62,9 @@ protected:
   QWidget                                 * pageScan;
   QProgressBar                            * progress;
 
+
+  void timerEvent(QTimerEvent*);
+
 public:
   MainWin();
   void loadDefaultParameters();
@@ -65,6 +75,7 @@ public slots :
   void openParamFile();
   bool checkIfParamOk();
   void calibrate();
+  void saveCalibrationParam();
   void saveFile();
   void newScan();
 

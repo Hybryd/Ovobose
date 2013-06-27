@@ -69,19 +69,23 @@ protected:
 
 public:
   Calibration();
-  Calibration(std::string pFile);
+//  Calibration(std::string pFile);
   ~Calibration();
   
   int & getCptMouse() {return cptMouse;}
   std::vector<cv::Point> &  getVecPoints() {return vecPoints;}
   std::vector<cv::Point3d> &  getVecRPoints() {return vecRPoints;}
   
+  cv::Mat getMat() {return matM;}
+  cv::Mat getVec() {return vecN;}
+  
+  
 //  void onMouseCircularPattern(int event, int x, int y, int flags, void* param);
   void circularPattern(int pNbCal,double pRadius);
   
   void launch(int pNbCal);
   
-  void save(std::string pNameMatrix, std::string pNameNormal);
+//  void save(std::string pNameMatrix, std::string pNameNormal);
   
 };
 

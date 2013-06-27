@@ -257,3 +257,15 @@ void DataConverter::save(std::string fileName, pcl::PointCloud<pcl::PointXYZ>::P
 
 
 
+void DataConverter::saveInXML(std::string fileName, std::vector<std::string> varNames, std::vector<cv::Mat> vars )
+{
+  cv::FileStorage fs(fileName, cv::FileStorage::WRITE);
+  if(varNames.size() == vars.size())
+  {
+    for(int i=0;i<vars.size();++i)
+      fs << varNames[i] << vars[i];
+  }
+  fs.release();
+}
+
+

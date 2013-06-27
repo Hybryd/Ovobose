@@ -8,23 +8,23 @@ Calibration::Calibration()
   cvNamedWindow( "Calibration" );
 }
 
-Calibration::Calibration(std::string pFile)
-{
-  cptMouse = 0;
-  if (pFile.size() > 4 && pFile.find(".xml")==pFile.size()-4)
-  {
-//    /// ADEL
-//    std::cerr << "contructor" << std::endl;
-//    /// 
-    paramFile = pFile;
-  }
-  else
-  {
-    std::cerr << "WARNING: bad name for output file. Parameters will be saved in param/cal_param.xml" << std::endl;
-    paramFile = "param/cal_param.xml";
-  }
-  cvNamedWindow( "Calibration" );
-}
+//Calibration::Calibration(std::string pFile)
+//{
+//  cptMouse = 0;
+//  if (pFile.size() > 4 && pFile.find(".xml")==pFile.size()-4)
+//  {
+////    /// ADEL
+////    std::cerr << "contructor" << std::endl;
+////    /// 
+//    paramFile = pFile;
+//  }
+//  else
+//  {
+//    std::cerr << "WARNING: bad name for output file. Parameters will be saved in param/cal_param.xml" << std::endl;
+//    paramFile = "param/cal_param.xml";
+//  }
+//  cvNamedWindow( "Calibration" );
+//}
 
 Calibration::~Calibration()
 {
@@ -135,26 +135,26 @@ void Calibration::launch(int pNbCal)
 }
 
 
-void Calibration::save(std::string pNameMatrix, std::string pNameNormal)
-{
-  cv::FileStorage fs(paramFile, cv::FileStorage::WRITE);
-//  std::cout << "    Saving transformation matrix." << std::endl;
-  std::string lM = pNameMatrix;
-  std::string lN = pNameNormal;
-  
-  if(pNameMatrix.size()==0 || pNameNormal.size()==0 || pNameMatrix.find(" ") != std::string::npos || pNameNormal.find(" ") != std::string::npos)
-  {
-    std::cerr << "WARNING: bad name for data. The transformation matrix will be saved as \"matM\" and the normal vector as \"vecN\"." << std::endl;
-    lM = "matM";
-    lN = "vecN";
-  }
-  
-  fs << lM << matM;
-  fs << lN << vecN;
-  
-  fs.release();
-  
-}
+//void Calibration::save(std::string pNameMatrix, std::string pNameNormal)
+//{
+//  cv::FileStorage fs(paramFile, cv::FileStorage::WRITE);
+////  std::cout << "    Saving transformation matrix." << std::endl;
+//  std::string lM = pNameMatrix;
+//  std::string lN = pNameNormal;
+//  
+//  if(pNameMatrix.size()==0 || pNameNormal.size()==0 || pNameMatrix.find(" ") != std::string::npos || pNameNormal.find(" ") != std::string::npos)
+//  {
+//    std::cerr << "WARNING: bad name for data. The transformation matrix will be saved as \"matM\" and the normal vector as \"vecN\"." << std::endl;
+//    lM = "matM";
+//    lN = "vecN";
+//  }
+//  
+//  fs << lM << matM;
+//  fs << lN << vecN;
+//  
+//  fs.release();
+//  
+//}
 
 
 

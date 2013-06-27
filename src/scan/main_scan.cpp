@@ -132,9 +132,22 @@ int main(int argc, char ** argv )
   
   if(cal_needed=="yes")
   {
-    Calibration cal(param_file);
+//    Calibration cal(param_file);
+//    cal.circularPattern(cal_circular_pattern_number_points,cal_circular_pattern_radius);
+//    cal.save(param_name_matrix,param_name_normal);
+    Calibration cal;
     cal.circularPattern(cal_circular_pattern_number_points,cal_circular_pattern_radius);
-    cal.save(param_name_matrix,param_name_normal);
+    DataConverter dc;
+    std::vector<std::string> varNames;
+    std::vector<cv::Mat> vars;
+    
+    varNames.push_back("matM");
+    varNames.push_back("vecN");
+    
+    vars.push_back(cal.getMat());
+    vars.push_back(cal.getVec());
+    dc.saveInXML(param_file, varNames, vars);
+
   }
   
   std::cout << " 2) Scan" << std::endl;
