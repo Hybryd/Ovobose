@@ -27,18 +27,42 @@ MainWin::MainWin()
   actionQuit->setShortcut(QKeySequence(tr("Ctrl+Q")));  
   
   
+  
+  
   widCam = new QOpenCVWidget(this);
   labCam = new QLabel(this);
   camera = cv::VideoCapture(0);
-  camera.set(CV_CAP_PROP_FRAME_WIDTH, 700 );
-  camera.set(CV_CAP_PROP_FRAME_HEIGHT, 700 );
+  camera.set(CV_CAP_PROP_FRAME_WIDTH, WIDTH_IMAGE );
+  camera.set(CV_CAP_PROP_FRAME_HEIGHT, HEIGHT_IMAGE );
   
+  // Mouse event from QOpenCVWidget
+  connect(widCam, SIGNAL(mouseMoveEvent(QMouseEvent * e)), this, SLOT(mouseOverImage(QMouseEvent * e)));
+  
+  
+  imgCam = cv::Mat(WIDTH_IMAGE,HEIGHT_IMAGE, cv::DataType<cv::Vec3b>::type );
   if(!camera.isOpened())
   {
     
+//    for(int x=0; x<imgCam.cols; ++x)
+//    {
+//      for(int y=0; y<imgCam.rows; ++y)
+//      {
+//        imgCam.at<cv::Vec3b>(x,y)[0]=0;
+//        imgCam.at<cv::Vec3b>(x,y)[1]=0;
+//        imgCam.at<cv::Vec3b>(x,y)[2]=0;
+//      }
+//    }
+    widCam->putTextOnly(QString("No camera detected"));
   }
-  camera >> imgCam;
+  else
+  {
+    camera >> imgCam;
+    widCam->putImage(imgCam);
+  }
+  
   widCam->resize(imgCam.cols+2*BORDER,imgCam.rows+2*BORDER);
+  
+  
   
   
   streamCpt = startTimer(100);
@@ -49,6 +73,7 @@ MainWin::MainWin()
   
   tabs = new QTabWidget(this);
   tabs->setGeometry(BORDER,BORDER,widCam->width()+2*BORDER,widCam->height()+2*BORDER + HEIGHT_PROGRESS+100);
+  tabs->setFixedHeight(widCam->height()+2*BORDER + HEIGHT_PROGRESS+100);
   
     pageCal = new QWidget;
       vbox1 = new QVBoxLayout;
@@ -61,16 +86,16 @@ MainWin::MainWin()
             groupBut = new QGroupBox;
               
               vbox2 = new QVBoxLayout;
-              
+                // Button open parameters file
+                butOpenParamFile = new QPushButton(tr("Open calibration"),this);
+                connect(butOpenParamFile, SIGNAL(clicked()), this, SLOT(openParamFile()));
+                
                 // Button calibration
                 butCalibration = new QPushButton("Calibrate",this);
                 connect(butCalibration, SIGNAL(clicked()), this, SLOT(calibrate()));
                 
-                // Button open parameters file
-                butOpenParamFile = new QPushButton(tr("Open parameter file"),this);
-                connect(butOpenParamFile, SIGNAL(clicked()), this, SLOT(openParamFile()));
-              vbox2->addWidget(butCalibration);
               vbox2->addWidget(butOpenParamFile);
+              vbox2->addWidget(butCalibration);
               
             groupBut->setLayout(vbox2);
           
@@ -123,8 +148,32 @@ MainWin::MainWin()
         
         groupTop->setLayout(hbox1);
       
-      
+        // Calibration Group box
+        groupCal = new QGroupBox;
+          hboxCal = new QHBoxLayout;
+            
+            labCalNbPoints = new QLabel("Number of points",this);
+            sbCalNbPoints = new QSpinBox(this);
+            sbCalNbPoints->setRange(10,100);
+            
+            labCalRad = new QLabel("Radius",this);
+            sbCalRad = new QSpinBox(this);
+            sbCalRad->setRange(0,100);
+            
+            labCalAngle = new QLabel("Angular step",this);
+            sbCalAngle = new QSpinBox(this);
+            sbCalAngle->setRange(0,10);
+            
+          hboxCal->addWidget(labCalRad); 
+          hboxCal->addWidget(sbCalRad);
+          hboxCal->addWidget(labCalNbPoints);
+          hboxCal->addWidget(sbCalNbPoints);
+          hboxCal->addWidget(labCalAngle);
+          hboxCal->addWidget(sbCalAngle);
+        groupCal->setLayout(hboxCal);
+        
       vbox1->addWidget(groupTop);
+      vbox1->addWidget(groupCal);
       vbox1->addWidget(widCam);
       
       
@@ -153,6 +202,8 @@ MainWin::MainWin()
   
   loadDefaultParameters();
   resize(tabs->width() + 2*BORDER,tabs->height()+2*BORDER);
+  
+  calibration=false;
 }
 
 
@@ -442,11 +493,59 @@ void MainWin::timerEvent(QTimerEvent* e)
 {
 	if(e->timerId()==streamCpt)
 	{
-		camera >> imgCam;
-		widCam->putImage(imgCam);
+	  if(camera.isOpened())
+	  {
+		  camera >> imgCam;
+		  widCam->putImage(imgCam);
+		}
+		else
+		{
+		  camera = cv::VideoCapture(0);
+		  widCam->putTextOnly(QString("No camera detected"));
+		}
 	}
 }
 
+
+void MainWin::mousePressEvent(QMouseEvent *event)
+{
+//  if (event->button() == Qt::LeftButton)
+//  {
+//    lastPoint = event->pos();
+//  }
+}
+
+void MainWin::mouseMoveEvent(QMouseEvent *event)
+{
+  
+//  if ((event->buttons() & Qt::LeftButton))
+//  {
+//    statusBar()->showMessage(QString("Position: ") + QString::number(event->pos().x()) + QString("/") + QString::number(event->pos().y()));
+//    std::cerr <<  event->pos().x() << " " << event->pos().y()  << std::endl;
+//  }
+}
+
+void MainWin::mouseReleaseEvent(QMouseEvent *event)
+{
+  if (event->button() == Qt::LeftButton && calibration)
+  {
+    std::pair< int,int > p;
+    p.first = event->pos().x();
+    p.second = event->pos().y();
+    vecCalPoints.push_back(p);
+  }
+}
+
+void MainWin::resizeEvent(QResizeEvent *event)
+{
+//     if (width() > image.width() || height() > image.height()) {
+//         int newWidth = qMax(width() + 128, image.width());
+//         int newHeight = qMax(height() + 128, image.height());
+//         resizeImage(&image, QSize(newWidth, newHeight));
+//         update();
+//     }
+//     QWidget::resizeEvent(event);
+}
 
 void MainWin::newScan()
 {
@@ -458,6 +557,10 @@ void MainWin::newScan()
 
 
 
-
+void MainWin::mouseOverImage(QMouseEvent * e)
+{
+  statusBar()->showMessage(QString("Position: ") + QString::number(e->pos().x()) + QString("/") + QString::number(e->pos().y()));
+  std::cerr <<  e->pos().x() << " " << e->pos().y()  << std::endl;
+}
 
 

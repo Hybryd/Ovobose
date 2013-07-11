@@ -41,3 +41,16 @@ void QOpenCVWidget::putImage(cv::Mat & cvimage)
 }
 
 
+void QOpenCVWidget::putTextOnly(QString s)
+{
+  imagelabel->setText(s);
+}
+
+
+
+void QOpenCVWidget::mouseMoveEvent( QMouseEvent* e )
+{
+  emit mouseMove( e );
+}
+
+

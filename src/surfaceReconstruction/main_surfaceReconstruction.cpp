@@ -135,10 +135,14 @@ int main (int argc, char** argv)
   
     // Check if output file is .vtk
   
-  if(output_name.find(".vtk") != output_name.size()-4 )
+  if(output_name.find(".vtk") == output_name.size()-4 || output_name.find(".ply") == output_name.size()-4 || output_name.find(".stl") == output_name.size()-4)
   {
-    output_name += ".vtk";
-    std::cout << "WARNING: output file must be VTK. Data will be saved in " << output_name << "." << std::endl;
+    // ok
+  }
+  else //if(output_name.find(".vtk") != output_name.size()-4 )
+  {
+    output_name += ".stl";
+    std::cerr << "WARNING: output file must be STL. Data will be saved in " << output_name << "." << std::endl;
   }
   
   std::cout << "    input_file           " << input_name << std::endl;
@@ -231,7 +235,8 @@ int main (int argc, char** argv)
 
   // Save data
   cout << " 6) Store data in " << output_name << endl;
-  pcl::io::savePolygonFileVTK(output_name, triangles);
+//  pcl::io::savePolygonFileVTK(output_name, triangles);
+  dc.savePolygon(output_name, triangles);
   
   return (0);
 }

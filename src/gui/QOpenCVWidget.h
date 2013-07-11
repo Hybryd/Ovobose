@@ -10,17 +10,28 @@
 #include <QVBoxLayout>
 #include <QImage>
 
-class QOpenCVWidget : public QWidget {
-private:
+class QOpenCVWidget : public QWidget
+{
+  Q_OBJECT
+
+signals:
+  void mouseMove( QMouseEvent* e );
+
+protected:
   QLabel *imagelabel;
   QVBoxLayout *layout;
 
   QImage image;
 
+  void mouseMoveEvent( QMouseEvent* e );
+
 public:
   QOpenCVWidget(QWidget *parent = 0);
   ~QOpenCVWidget(void);
   void putImage(cv::Mat &);
+  void putTextOnly(QString s);
+
+
 };
 
 #endif

@@ -4,6 +4,8 @@
 
 #define BORDER 5
 #define HEIGHT_PROGRESS 15
+#define HEIGHT_IMAGE 800
+#define WIDTH_IMAGE 800
 
 
 #include <cv.h>
@@ -61,9 +63,24 @@ protected:
   QLabel                                  * labBot;
   QWidget                                 * pageScan;
   QProgressBar                            * progress;
-
+  
+  // Calibration
+  bool                                      calibration;
+  QGroupBox                               * groupCal;
+  QHBoxLayout                             * hboxCal;
+  QLabel                                  * labCalRad;
+  QSpinBox                                * sbCalRad;
+  QLabel                                  * labCalNbPoints;
+  QSpinBox                                * sbCalNbPoints;
+  QLabel                                  * labCalAngle;
+  QSpinBox                                * sbCalAngle;
+  std::vector< std::pair< int,int > >       vecCalPoints;
 
   void timerEvent(QTimerEvent*);
+  void mousePressEvent(QMouseEvent *event);
+  void mouseMoveEvent(QMouseEvent *event);
+  void mouseReleaseEvent(QMouseEvent *event);
+  void resizeEvent(QResizeEvent *event);
 
 public:
   MainWin();
@@ -78,6 +95,7 @@ public slots :
   void saveCalibrationParam();
   void saveFile();
   void newScan();
+  void mouseOverImage(QMouseEvent * e);
 
 };
  

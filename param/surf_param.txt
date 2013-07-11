@@ -1,5 +1,5 @@
 #input_name data/ball_PP.ply
-#output_name data/ball2.vtk
+#output_name data/ball2.stl
 #vog_leafsize          .05
 #sor_outl_tolerance    0.5
 #sor_meanK             50

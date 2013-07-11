@@ -251,11 +251,24 @@ void DataConverter::save(std::string fileName, pcl::PointCloud<pcl::PointXYZ>::P
   //    out << data[i].at<double>(0,0) << " " << data[i].at<double>(0,1) << " " << data[i].at<double>(0,2) << std::endl;
       out << (*cloud)[i].x << " " << (*cloud)[i].y << " " << (*cloud)[i].z << std::endl;
     }
-    
   }
 }
 
-
+void DataConverter::savePolygon(std::string fileName, pcl::PolygonMesh & mesh)
+{
+  if (fileName.find(".vtk")==fileName.size()-4)
+  {
+    pcl::io::savePolygonFileVTK (fileName.c_str(), mesh);
+  }
+  else if (fileName.find(".ply")==fileName.size()-4)
+  {
+    pcl::io::savePolygonFilePLY (fileName.c_str(), mesh);
+  }
+  else // otherwise save as STL file
+  {
+    pcl::io::savePolygonFileSTL (fileName.c_str(), mesh);
+  }
+}
 
 void DataConverter::saveInXML(std::string fileName, std::vector<std::string> varNames, std::vector<cv::Mat> vars )
 {
