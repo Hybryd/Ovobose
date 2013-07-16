@@ -33,34 +33,34 @@ file( GLOB allsrc src/*.cpp )
 #ADD_EXECUTABLE(main_qt ${main_qt_src} ${main_qt_headers_moc})
 #TARGET_LINK_LIBRARIES(main_qt ${QT_LIBRARIES})
 
-# gui
-file( GLOB main_gui src/gui/*.cpp )
-file( GLOB gui_src src/*.cpp )
-file( GLOB gui_head src/gui/*.h )
-#file( GLOB gui_head src/gui/MainWin.h )
-QT4_WRAP_CPP(gui_head_moc ${gui_head})
-add_executable(gui ${main_gui} ${gui_src} ${gui_head_moc})
-target_link_libraries(gui ${OpenCV_LIBS} ${PCL_LIBRARIES} ${QT_LIBRARIES})
+#### gui
+###file( GLOB main_gui src/gui/*.cpp )
+###file( GLOB gui_src src/*.cpp )
+###file( GLOB gui_head src/gui/*.h )
+####file( GLOB gui_head src/gui/MainWin.h )
+###QT4_WRAP_CPP(gui_head_moc ${gui_head})
+###add_executable(gui ${main_gui} ${gui_src} ${gui_head_moc})
+###target_link_libraries(gui ${OpenCV_LIBS} ${PCL_LIBRARIES} ${QT_LIBRARIES})
 
 ## scan
 #file( GLOB main_scan src/scan/*.cpp )
 #add_executable( scan ${main_scan} ${allsrc} )
 #target_link_libraries( scan ${OpenCV_LIBS} ${PCL_LIBRARIES} )
 
-## postProcess
-#file(GLOB main_postProcess src/postProcess/*.cpp )
-#add_executable( postProcess ${main_postProcess} ${allsrc})
-#target_link_libraries( postProcess ${OpenCV_LIBS} ${PCL_LIBRARIES} )
+# postProcess
+file(GLOB main_postProcess src/postProcess/*.cpp )
+add_executable( postProcess ${main_postProcess} ${allsrc})
+target_link_libraries( postProcess ${OpenCV_LIBS} ${PCL_LIBRARIES} )
 
 ## see
 #file(GLOB main_see src/see/*.cpp )
 #add_executable( see ${main_see} ${allsrc})
 #target_link_libraries( see ${OpenCV_LIBS} ${PCL_LIBRARIES})
 
-## surfaceReconstruction
-#file(GLOB main_surfaceReconstruction src/surfaceReconstruction/*.cpp )
-#add_executable( surfaceReconstruction ${main_surfaceReconstruction} ${allsrc})
-#target_link_libraries( surfaceReconstruction ${OpenCV_LIBS} ${PCL_LIBRARIES} )
+# surfaceReconstruction
+file(GLOB main_surfaceReconstruction src/surfaceReconstruction/*.cpp )
+add_executable( surfaceReconstruction ${main_surfaceReconstruction} ${allsrc})
+target_link_libraries( surfaceReconstruction ${OpenCV_LIBS} ${PCL_LIBRARIES} )
 
 
 
