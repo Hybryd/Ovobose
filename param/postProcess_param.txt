@@ -1,5 +1,5 @@
-#post_proc_input_file data/ball_PP.pcd
-#post_proc_output_file data/ball_PP.ply
+#post_proc_input_file data/baseBall.pcd
+#post_proc_output_file data/baseBall_PP.pcd
 #post_proc_cylinder_center 0 0 0.5
-#post_proc_cylinder_radius 5
-#post_proc_cylinder_height 5
+#post_proc_cylinder_radius 4.5
+#post_proc_cylinder_height 4

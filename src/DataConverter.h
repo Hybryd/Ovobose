@@ -16,6 +16,7 @@
 #include <pcl/io/ply_io.h>
 //#include <pcl/io/ply_lib_io.h>
 //#include <pcl/io/stl_lib_io.h>
+#include <pcl/common/io.h>
 #include <pcl/io/vtk_lib_io.h>
 #include <pcl/point_types.h>
 #include <string>
@@ -46,6 +47,9 @@ public:
   void save(std::string fileName, std::vector< std::vector<double> > & vecMat);
   void save(std::string fileName, pcl::PointCloud<pcl::PointXYZ> & cloud);
   void save(std::string fileName, pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
+  
+  void saveAsOBJ(std::string &file_name, pcl::PolygonMesh &poly_mesh, unsigned precision);
+  void saveAsSTL(std::string &file_name, pcl::PolygonMesh &poly_mesh, unsigned precision);
   
   void savePolygon(std::string fileName, pcl::PolygonMesh &mesh);
   

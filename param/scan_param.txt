@@ -1,11 +1,11 @@
 #param_file cal_param.xml
 #cal_needed yes
-#cal_circular_pattern_radius 5.6
-#cal_circular_pattern_number_points 20
+#cal_circular_pattern_radius 4.8
+#cal_circular_pattern_number_points 19
 #param_name_matrix matM
 #param_name_normal vecN
-#scan_output_file data/mug.pcd
+#scan_output_file data/baseBall.pcd
 #scan_step_angle 1
-#post_proc_output_file data/mug.pcd
-#post_proc_cylinder_radius 7
-#post_proc_cylinder_height 15
+#post_proc_output_file data/baseBall_PP.pcd
+#post_proc_cylinder_radius 4.5
+#post_proc_cylinder_height 9

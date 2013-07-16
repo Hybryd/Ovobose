@@ -1,13 +1,27 @@
-#input_name data/ball_PP.ply
-#output_name data/ball2.stl
+#input_name data/baseBall_PP.pcd
+#output_name data/baseBall.stl
+#qu_reconstruct        true
 #vog_leafsize          .05
-#sor_outl_tolerance    0.5
-#sor_meanK             50
+#sor_outl_tolerance    0.2
+## sor_meanK grand : ronge plus de points
+#sor_meanK             500
 #mls_search_radius     .1
-#gp_search_radius      .5
-#gp_neigb_mu_crit      2
+#mls_polygonal_fit     true
+#mls_nbIter            50
+#gp_search_radius      20
+#gp_neigb_mu_crit      3
 #gp_mnn_crit           500
 #gp_max_surf_ang_crit  4
 #gp_min_ang_crit       18
-#gp_max_ang_crit       1.5
+#gp_max_ang_crit       0.01
 #ne_radius             0.1
+#ms_nbIter             60000
+#ms_convergence        0.00001
+#ms_relaxFactor        0.01
+#ms_edgeSmoothing      true
+#ms_angle              18
+#ms_boundarySmoothing  true
+#mc_leafSize           0.1
+#mc_isoLevel           0.001
+#mc_resolution         50 50 50
+

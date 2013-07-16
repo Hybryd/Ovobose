@@ -12,6 +12,7 @@
 #include <cv_compatible.h>
 #include <fstream>
 #include <iostream>
+#include <pcl/filters/statistical_outlier_removal.h>
 #include <pcl/io/io.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/io/ply_io.h>
@@ -26,10 +27,11 @@
 #include <vtkSmoothPolyDataFilter.h>
 
 
+
 /*!
 *
 * \class PostProcessor
-* \brief Contains a set of functions that remove points lying outside a domain and smooth points
+* \brief Contains a set of functions that remove points lying outside a domain, smoothing cloud and meshes algorithms
 *
 */
 
@@ -42,8 +44,9 @@ public:
 
   PostProcessor();
 
-  void smoothMesh(pcl::PolygonMesh::Ptr meshIn, pcl::PolygonMesh & meshOut, unsigned long int nbIter, double convergence, double relaxFactor, bool edgeSmoothing, bool angle, bool boundarySmoothing);
-  void smoothCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP, bool polygonalFit, double radius);
+  void smoothMesh(pcl::PolygonMesh::Ptr meshIn, pcl::PolygonMesh & meshOut, unsigned long int nbIter, double convergence, double relaxFactor, bool edgeSmoothing, double angle, bool boundarySmoothing);
+  void smoothCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP, bool polygonalFit, double radius, int nbIter);
+  void smoothCloudSOR(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP, int meanK, double stdDev);
   
   void keepInCylinder(pcl::PointCloud<pcl::PointXYZ> & dataRaw, pcl::PointCloud<pcl::PointXYZ> & dataPP, pcl::PointXYZ center, double radius, double height);
   void keepInCylinder(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP, pcl::PointXYZ center, double radius, double height);

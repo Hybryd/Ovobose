@@ -254,6 +254,97 @@ void DataConverter::save(std::string fileName, pcl::PointCloud<pcl::PointXYZ>::P
   }
 }
 
+
+void DataConverter::saveAsOBJ (std::string &file_name, pcl::PolygonMesh &poly_mesh, unsigned precision = 6)
+{
+  if (poly_mesh.cloud.data.empty ())
+  {
+          PCL_ERROR ("[DataConverter::saveAsOBJ] Input point cloud is empty\n");
+  }
+  // Open file
+  std::ofstream fs;
+  fs.precision (precision);
+  fs.open (file_name.c_str ());
+
+  /* Write 3D information */
+  // number of points
+  int nr_points  = poly_mesh.cloud.width * poly_mesh.cloud.height;
+
+  // mesh size
+  int nr_meshes = poly_mesh.polygons.size();
+
+  // Write the header information
+  fs << "####" << std::endl;
+  fs << "# OBJ dataFile simple version. File name: " << file_name << std::endl;
+  fs << "# Vertices: " << nr_points << std::endl;
+  fs << "# Faces: " << nr_meshes << std::endl;
+  fs << "####" << std::endl;
+
+  // Write vertex coordinates
+  fs << "# Vertices" << std::endl;
+
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr rgbCloud (new pcl::PointCloud<pcl::PointXYZRGB>);
+  pcl::fromROSMsg(poly_mesh.cloud, *rgbCloud);
+  
+  for (unsigned int i=0; i<rgbCloud->points.size(); i++)
+  {
+          fs << "v " << rgbCloud->points[i].x << " " << rgbCloud->points[i].y << " " << rgbCloud->points[i].z << " 0 0 0"  << std::endl; //<< (double)((double)rgbCloud->points[i].r/255.0f) << " "  << (double)((double)rgbCloud->points[i].g/255.0f) << " " << (double)((double)rgbCloud->points[i].b/255.0f) << std::endl;
+  }
+
+  fs << "# "<< nr_points <<" vertices" << std::endl;
+
+  for(int m = 0; m < nr_meshes; ++m){
+          // Write faces with "f"
+          fs << "f ";
+          size_t j = 0;
+          for (j = 0; j < poly_mesh.polygons[m].vertices.size () - 1; ++j)
+                  fs << poly_mesh.polygons[m].vertices[j] +1 << " "; // vertex index in obj file format starting with 1
+          fs << poly_mesh.polygons[m].vertices[j]+1 <<  std::endl;
+  }
+  fs << "# End of File";
+
+  // Close obj file
+  fs.close ();
+//        return (0);
+}
+
+void DataConverter::saveAsSTL(std::string &file_name, pcl::PolygonMesh &poly_mesh, unsigned precision = 6)
+{
+  if (poly_mesh.cloud.data.empty ())
+  {
+    PCL_ERROR ("[DataConverter::saveAsSTL] Input point cloud is empty\n");
+  }
+  // Open file
+  std::ofstream fs;
+////  fs.precision (precision);
+////  fs.open (file_name.c_str ());
+  
+  pcl::PointCloud<pcl::PointXYZRGB> vertices;
+  pcl::fromROSMsg(poly_mesh.cloud, vertices);
+
+//  fs << "solid DaMesh" << std::endl;
+  std::cerr.precision (precision);
+  std::cerr <<  poly_mesh.polygons[1].vertices[0] <<  std::endl;
+  // For each polygon
+////  for (size_t i=0; i<poly_mesh.polygons.size(); ++i)
+////  {
+////    fs << " facet normal " << 
+//    
+////    fs << "  facet normal " << XXXX << std::endl;
+////    fs << "    outer loop" << std::endl;
+////    for (size_t j=0; j<poly_mesh.polygons[i].vertices.size(); ++j)
+////    {
+////      fs << "      vertex " << poly_mesh.polygons[i].vertices[j] << std::endl;
+////    }
+////  } 
+//  
+
+
+//  fs << "endsolid DaMesh" << std::endl;
+
+}
+
+
 void DataConverter::savePolygon(std::string fileName, pcl::PolygonMesh & mesh)
 {
   if (fileName.find(".vtk")==fileName.size()-4)
@@ -264,9 +355,14 @@ void DataConverter::savePolygon(std::string fileName, pcl::PolygonMesh & mesh)
   {
     pcl::io::savePolygonFilePLY (fileName.c_str(), mesh);
   }
-  else // otherwise save as STL file
+  else if (fileName.find(".obj")==fileName.size()-4)
   {
-    pcl::io::savePolygonFileSTL (fileName.c_str(), mesh);
+    saveAsOBJ (fileName, mesh);
+  }
+  else // otherwise save as STL file (with the above function)
+  {
+    //saveAsSTL (fileName, mesh);
+    pcl::io::savePolygonFileSTL(fileName.c_str(), mesh);
   }
 }
 

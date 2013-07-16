@@ -4,7 +4,7 @@ PostProcessor::PostProcessor()
 {
 }
 
-void PostProcessor::smoothMesh(pcl::PolygonMesh::Ptr meshIn, pcl::PolygonMesh & meshOut, unsigned long int nbIter, double convergence, double relaxFactor, bool edgeSmoothing, bool angle, bool boundarySmoothing)
+void PostProcessor::smoothMesh(pcl::PolygonMesh::Ptr meshIn, pcl::PolygonMesh & meshOut, unsigned long int nbIter, double convergence, double relaxFactor, bool edgeSmoothing, double angle, bool boundarySmoothing)
 {
   std::cout << "Begin Laplacian VTKSmoothing...";
   pcl::PolygonMesh output;
@@ -20,7 +20,7 @@ void PostProcessor::smoothMesh(pcl::PolygonMesh::Ptr meshIn, pcl::PolygonMesh & 
   std::cout << "Done." << std::endl;
 }
 
-void PostProcessor::smoothCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP, bool polygonalFit, double radius)
+void PostProcessor::smoothCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP, bool polygonalFit, double radius, int nbIter)
 {
   pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
   pcl::PointCloud<pcl::PointNormal> mls_points;
@@ -38,8 +38,19 @@ void PostProcessor::smoothCloud(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl
 
   // Reconstruct
   mls.process (*dataPP);
-
 }
+
+
+// Statistical Outlier Removal
+void PostProcessor::smoothCloudSOR(pcl::PointCloud<pcl::PointXYZ>::Ptr dataRaw, pcl::PointCloud<pcl::PointXYZ>::Ptr dataPP, int meanK, double stdDev)
+{
+  pcl::StatisticalOutlierRemoval<pcl::PointXYZ> sor;
+  sor.setInputCloud (dataRaw);
+  sor.setMeanK (meanK);
+  sor.setStddevMulThresh (stdDev);
+  sor.filter (*dataPP);
+}
+
 
 void PostProcessor::keepInCylinder(pcl::PointCloud<pcl::PointXYZ> & dataRaw, pcl::PointCloud<pcl::PointXYZ> & dataPP, pcl::PointXYZ center, double radius, double height)
 {
