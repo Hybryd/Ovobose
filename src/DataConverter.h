@@ -9,7 +9,7 @@
 */
 
 
-#include <cv_compatible.h>
+#include "/usr/include/opencv/cv_compatible.h"
 #include <fstream>
 #include <pcl/io/io.h>
 #include <pcl/io/pcd_io.h>

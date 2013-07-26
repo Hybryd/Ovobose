@@ -286,9 +286,9 @@ void Scan::measure(cv::Mat & current)
 
 void Scan::save()
 {
-  DataConverter dc;
+  DataHandler dh;
   std::vector< std::vector<double> > dat = getData();
-  dc.save(outputFile, dat);
+  dh.saveAsXYZ(outputFile, dat);
   
   
 //  if (outputFile.find(".pcd")==outputFile.size()-4)
